@@ -211,13 +211,20 @@
             "openAriaLabel": "Apri {{name}}",
             "columns": {
                 "name": "Scenario",
-                "wrapper": "Involucro",
+                "type": "Tipo",
                 "horizon": "Orizzonte",
-                "date": "Data",
-                "amount": "Importo"
+                "date": "Data"
             },
             "calculatorTypes": {
-                "single_envelope": "Mono-involucro"
+                "single_envelope": "Simulatore classico",
+                "multi_envelope": "Multi-involucro",
+                "analogy": "Comparatore",
+                "fire": "FIRE"
+            },
+            "pagination": {
+                "previous": "Pagina precedente",
+                "next": "Pagina successiva",
+                "pageIndicator": "Pagina {{currentPage}} di {{lastPage}}"
             }
         },
         "promo": {
@@ -397,8 +404,12 @@
                 "COMPTE_COURANT": "Conto corrente"
             },
             "form": {
-                "name": "Nome dello scenario (facoltativo)",
+                "name": "Nome dello scenario",
                 "namePlaceholder": "PEA vs CTO — confronto a 20 anni",
+                "suggestName": {
+                    "button": "Suggerisci un nome",
+                    "template": "{{accountTypeA}} vs {{accountTypeB}}"
+                },
                 "sections": {
                     "shared": "Parametri condivisi",
                     "scenarios": "Scenari da confrontare"
@@ -439,13 +450,20 @@
             }
         },
         "calculationFailed": "Il calcolo non è andato a buon fine. Riprova tra qualche istante.",
+        "form": {
+            "nameRequired": "Il nome dello scenario è obbligatorio."
+        },
         "fire": {
             "eyebrow": "Indipendenza finanziaria",
             "title": "Simulatore FIRE",
             "description": "Stima il capitale necessario per vivere delle tue rendite e l'età in cui potresti raggiungerlo.",
             "form": {
-                "name": "Nome dello scenario (facoltativo)",
+                "name": "Nome dello scenario",
                 "namePlaceholder": "Indipendenza finanziaria a 55 anni",
+                "suggestName": {
+                    "button": "Suggerisci un nome",
+                    "template": "FIRE a {{age}} {{yearsUnit}}"
+                },
                 "sections": {
                     "inputs": "I tuoi parametri"
                 },
@@ -519,8 +537,15 @@
             "title": "Simulazione multi-involucro",
             "description": "Combina più involucri fiscali in cascata e proietta la loro evoluzione insieme.",
             "form": {
-                "name": "Nome dello scenario (facoltativo)",
+                "name": "Nome dello scenario",
                 "namePlaceholder": "Cascata PEA + CTO — piano a lungo termine",
+                "suggestName": {
+                    "button": "Suggerisci un nome",
+                    "withDuration_one": "Multi-involucro ({{count}} tasca, {{years}} {{yearsUnit}})",
+                    "withDuration_other": "Multi-involucro ({{count}} tasche, {{years}} {{yearsUnit}})",
+                    "withoutDuration_one": "Multi-involucro ({{count}} tasca)",
+                    "withoutDuration_other": "Multi-involucro ({{count}} tasche)"
+                },
                 "sections": {
                     "name": "Scenario",
                     "envelopes": "Involucri"
@@ -585,8 +610,12 @@
                 "cto": "Proietta l'evoluzione di un investimento in un unico contenitore fiscale. Nessun massimale di versamento, imposta forfettaria unica del 30 % indipendentemente dalla durata di detenzione."
             },
             "form": {
-                "name": "Nome dello scenario (facoltativo)",
+                "name": "Nome dello scenario",
                 "namePlaceholder": "{{wrapper}} — piano a lungo termine",
+                "suggestName": {
+                    "button": "Suggerisci un nome",
+                    "template": "{{wrapper}} per {{years}} {{yearsUnit}}"
+                },
                 "sections": {
                     "capital": "Capitale & versamenti",
                     "performance": "Rendimento & costi",

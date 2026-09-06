@@ -35,7 +35,7 @@ class RunMultiEnvelopeSimulationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'inflationRate' => ['required', 'numeric', 'min:0', 'max:100'],
             'envelopes' => ['required', 'array', 'min:1', 'max:8'],
             'envelopes.*.accountType' => ['required', Rule::enum(AccountType::class)],

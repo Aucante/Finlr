@@ -77,15 +77,17 @@ class RunMultiEnvelopeSimulationTest extends TestCase
         $this->assertCount(2, $scenario->result_payload['pockets']);
     }
 
-    public function test_a_scenario_created_without_a_name_has_name_null_in_the_database(): void
+    public function test_a_scenario_submitted_without_a_name_is_rejected(): void
     {
         $user = User::factory()->create(['subscription_plan' => Plan::PRO_MONTHLY]);
 
-        $this->actingAs($user)->post('/simulators/multi-envelope', $this->validPayload());
+        $payload = $this->validPayload();
+        unset($payload['name']);
 
-        $scenario = Scenario::sole();
+        $response = $this->actingAs($user)->post('/simulators/multi-envelope', $payload);
 
-        $this->assertNull($scenario->name);
+        $response->assertSessionHasErrors('name');
+        $this->assertDatabaseCount('scenarios', 0);
     }
 
     public function test_a_scenario_created_with_a_name_stores_it_as_is(): void
@@ -177,6 +179,7 @@ class RunMultiEnvelopeSimulationTest extends TestCase
     private function validPayload(): array
     {
         return [
+            'name' => 'Cascade PEA + CTO',
             'inflationRate' => 2.0,
             'envelopes' => [
                 [

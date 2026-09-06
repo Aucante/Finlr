@@ -50,15 +50,17 @@ class RunSingleEnvelopeSimulationTest extends TestCase
         $this->assertSame(CalculatorType::SingleEnvelope, $scenario->calculator_type);
     }
 
-    public function test_a_scenario_created_without_a_name_has_name_null_in_the_database(): void
+    public function test_a_scenario_submitted_without_a_name_is_rejected(): void
     {
         $user = User::factory()->create(['subscription_plan' => Plan::PRO_MONTHLY]);
 
-        $this->actingAs($user)->post('/simulators/single-envelope/france/pea', $this->validPayload());
+        $payload = $this->validPayload();
+        unset($payload['name']);
 
-        $scenario = Scenario::sole();
+        $response = $this->actingAs($user)->post('/simulators/single-envelope/france/pea', $payload);
 
-        $this->assertNull($scenario->name);
+        $response->assertSessionHasErrors('name');
+        $this->assertDatabaseCount('scenarios', 0);
     }
 
     public function test_a_scenario_created_with_a_name_stores_it_as_is(): void
@@ -156,6 +158,7 @@ class RunSingleEnvelopeSimulationTest extends TestCase
     private function validPayload(): array
     {
         return [
+            'name' => 'Retraite à 62 ans',
             'initialCapital' => 1000,
             'monthlyContribution' => 200,
             'annualRate' => 5.5,

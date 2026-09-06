@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, type LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -9,51 +9,12 @@ import { cn } from '@/lib/utils';
 export type SimulatorCardState = 'active' | 'locked' | 'comingSoon';
 
 interface SimulatorCardProps {
-    index: number;
+    icon: LucideIcon;
     title: string;
     description: string;
     state: SimulatorCardState;
     href?: string;
     note?: string;
-    // Purely decorative — see DecorativeGrowthGlyph below. Opt-in per card
-    // instance so it isn't duplicated on every SimulatorCard.
-    showDecorativeChart?: boolean;
-}
-
-// Ornamental glyph, not a data visualization: fixed, hardcoded bar
-// heights (no computed/real figures) forming a smooth ascending
-// silhouette, purely for visual flavor next to the card's description —
-// same spirit as a logo mark. Never interactive, no axes/labels/values.
-const DECORATIVE_BAR_HEIGHTS = [8, 12, 15, 19, 24, 28, 34, 40] as const;
-
-function DecorativeGrowthGlyph() {
-    const barWidth = 9;
-    const gap = 5;
-    const maxHeight = 40;
-    const width = DECORATIVE_BAR_HEIGHTS.length * (barWidth + gap) - gap;
-
-    return (
-        <svg
-            aria-hidden
-            width={width}
-            height={maxHeight}
-            viewBox={`0 0 ${width} ${maxHeight}`}
-            className="shrink-0"
-        >
-            {DECORATIVE_BAR_HEIGHTS.map((barHeight, i) => (
-                <rect
-                    key={i}
-                    x={i * (barWidth + gap)}
-                    y={maxHeight - barHeight}
-                    width={barWidth}
-                    height={barHeight}
-                    rx={1.5}
-                    fill="var(--brand)"
-                    opacity={0.35 + (i / (DECORATIVE_BAR_HEIGHTS.length - 1)) * 0.65}
-                />
-            ))}
-        </svg>
-    );
 }
 
 // Plain informational badge — never a button (no interactive role, no
@@ -69,13 +30,12 @@ export function DashboardBadge({ children }: { children: ReactNode }) {
 }
 
 export default function SimulatorCard({
-    index,
+    icon: Icon,
     title,
     description,
     state,
     href,
     note,
-    showDecorativeChart,
 }: SimulatorCardProps) {
     const { t } = useTranslation();
 
@@ -99,13 +59,13 @@ export default function SimulatorCard({
                 <div className="mb-3.5 flex items-center gap-3">
                     <span
                         className={cn(
-                            'inline-flex size-9 shrink-0 items-center justify-center rounded-lg font-mono text-sm',
+                            'inline-flex size-9 shrink-0 items-center justify-center rounded-lg',
                             state === 'active'
                                 ? 'bg-brand/15 text-brand shadow-[0_0_12px_-2px_var(--brand)]'
                                 : 'bg-muted text-muted-foreground',
                         )}
                     >
-                        {index}
+                        <Icon aria-hidden className="size-5" />
                     </span>
                     <CardTitle
                         className={cn(
@@ -119,13 +79,8 @@ export default function SimulatorCard({
                 </div>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex flex-col gap-2">
-                        <p className="max-w-[40ch] text-sm text-muted-foreground">{description}</p>
-                        {note && <p className="text-xs text-muted-foreground">{note}</p>}
-                    </div>
-                    {showDecorativeChart && <DecorativeGrowthGlyph />}
-                </div>
+                <p className="max-w-[40ch] text-sm text-muted-foreground">{description}</p>
+                {note && <p className="text-xs text-muted-foreground">{note}</p>}
                 {state === 'active' && (
                     <span className="mt-4 inline-flex items-center gap-2 text-base font-semibold text-brand [text-shadow:0_0_40px_var(--brand)]">
                         {t('dashboard.simulatorCard.cta')}

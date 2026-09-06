@@ -20,6 +20,15 @@ export interface PageProps {
     [key: string]: unknown;
 }
 
+/** Mirrors App\Modules\Shared\DTOs\PaginatedData::toArray(). */
+export interface Paginated<T> {
+    data: T[];
+    currentPage: number;
+    lastPage: number;
+    perPage: number;
+    total: number;
+}
+
 /**
  * Page props for routes gated by the `auth` middleware, where `auth.user` is
  * guaranteed to be present.

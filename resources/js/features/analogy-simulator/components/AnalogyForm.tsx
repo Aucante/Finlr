@@ -10,13 +10,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import ScenarioColumn from '@/features/analogy-simulator/components/ScenarioColumn';
 import { SHARED_FIELD_CONFIG, SHARED_FIELD_ORDER, type SharedFieldKey } from '@/features/analogy-simulator/lib/sharedFields';
+import { suggestAnalogyName } from '@/features/analogy-simulator/lib/suggestName';
 import type { AccountType, AnalogyFormValues, AnalogySimulatorPageProps } from '@/features/analogy-simulator/types';
 
 type AnalogyFormProps = AnalogySimulatorPageProps;
 
 export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps) {
     const { t } = useTranslation();
-    const { data, setData, post, processing, errors } = useForm<AnalogyFormValues>({
+    const { data, setData, post, processing, errors, setError, clearErrors } = useForm<AnalogyFormValues>({
         ...defaults,
         name: '',
         accountTypeA: accountTypes[0],
@@ -31,7 +32,18 @@ export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps
 
     const submit = (e: SubmitEvent) => {
         e.preventDefault();
+
+        if (data.name.trim() === '') {
+            setError('name', t('simulator.form.nameRequired'));
+            return;
+        }
+
         post(route('simulators.analogy.run'));
+    };
+
+    const suggestName = () => {
+        setData('name', suggestAnalogyName(t, data.accountTypeA, data.accountTypeB));
+        clearErrors('name');
     };
 
     const renderSharedField = (fieldKey: SharedFieldKey) => {
@@ -89,7 +101,18 @@ export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps
                 </CardHeader>
                 <CardContent className="flex flex-col gap-6">
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="name">{t('simulator.analogy.form.name')}</Label>
+                        <div className="flex items-center justify-between gap-2">
+                            <Label htmlFor="name">{t('simulator.analogy.form.name')}</Label>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="text-brand hover:bg-brand/10 hover:text-brand"
+                                onClick={suggestName}
+                            >
+                                {t('simulator.analogy.form.suggestName.button')}
+                            </Button>
+                        </div>
                         <Input
                             id="name"
                             name="name"
@@ -98,7 +121,10 @@ export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps
                             placeholder={t('simulator.analogy.form.namePlaceholder')}
                             value={data.name}
                             aria-invalid={Boolean(errors.name)}
-                            onChange={(e) => setData('name', e.target.value)}
+                            onChange={(e) => {
+                                setData('name', e.target.value);
+                                clearErrors('name');
+                            }}
                         />
                         {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                     </div>

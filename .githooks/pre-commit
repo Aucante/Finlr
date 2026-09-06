@@ -1,0 +1,66 @@
+#!/bin/sh
+# .githooks/pre-commit
+
+echo "🔍 [Reviewer] Verification pre-commit..."
+
+# 1. Recuperation des fichiers PHP et TS/TSX stagges
+STAGED_PHP=$(git diff --cached --name-only --diff-filter=ACM | grep '\.php$')
+STAGED_JS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$')
+
+if [ -z "$STAGED_PHP" ] && [ -z "$STAGED_JS" ]; then
+    echo "✅ Aucun fichier PHP ou TS/TSX modifie."
+    exit 0
+fi
+
+# 2. Verification syntaxique et analyse PHPStan (si PHP modifie)
+if [ -n "$STAGED_PHP" ]; then
+    echo "📄 Fichiers PHP detectes :"
+    echo "$STAGED_PHP"
+
+    for FILE in $STAGED_PHP; do
+        php -l "$FILE" > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            echo "❌ [REJETE] Erreur de syntaxe PHP dans : $FILE"
+            php -l "$FILE"
+            exit 1
+        fi
+    done
+
+    echo "⚙️ Analyse PHPStan..."
+    if [ -f "./vendor/bin/sail" ] && docker ps | grep -q "sail"; then
+        ./vendor/bin/sail php ./vendor/bin/phpstan clear-result-cache > /dev/null 2>&1
+        ./vendor/bin/sail php ./vendor/bin/phpstan analyse $STAGED_PHP --level=8 --no-progress
+    else
+        ./vendor/bin/phpstan clear-result-cache > /dev/null 2>&1
+        ./vendor/bin/phpstan analyse $STAGED_PHP --level=8 --no-progress
+    fi
+
+    if [ $? -ne 0 ]; then
+        echo "❌ [REJETE] PHPStan a detecte des erreurs."
+        exit 1
+    fi
+fi
+
+# 3. Revue IA ciblee par l'agent Claude
+echo "🤖 Revue IA du diff..."
+ALL_STAGED="$STAGED_PHP $STAGED_JS"
+DIFF_DATA=$(git diff --cached $ALL_STAGED)
+
+PROMPT="Tu es un Reviewer Code Senior (PHP 8.3 & React/TS). Analyse ce git diff selon les regles suivantes :
+1/ Sécurité : Zero secret en dur, aucune faille XSS/Injection, props Inertia filtrées.
+2/ Moteur Financier : Pas de formule financière réimplémentée hors du package dédié.
+3/ Architecture : Monolithe modulaire backend (Actions, DTOs readonly, invokables) et Feature-based frontend (pas de 'any', types Miroir DTO).
+4/ Typage Strict : Pas d'array générique ou de 'any'.
+
+Si tu trouves un problème, reponds strictly 'REJETE:' suivi du detail exact. Sinon reponds 'VALIDE'."
+
+REVIEW_RESULT=$(claude -p "$PROMPT" "$DIFF_DATA")
+
+if echo "$REVIEW_RESULT" | grep -q "REJETE"; then
+    echo "❌ [REJETE PAR LE REVIEWER IA] :"
+    echo "$REVIEW_RESULT"
+    exit 1
+fi
+
+echo "✅ [VALIDE] Commit autorise."
+exit 0

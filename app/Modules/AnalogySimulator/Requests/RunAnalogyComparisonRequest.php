@@ -26,7 +26,7 @@ class RunAnalogyComparisonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'accountTypeA' => ['required', Rule::enum(AccountType::class)],
             'accountTypeB' => ['required', Rule::enum(AccountType::class)],
             'labelA' => ['nullable', 'string', 'max:255'],

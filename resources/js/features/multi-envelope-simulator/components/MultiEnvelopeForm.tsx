@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import EnvelopeRow from '@/features/multi-envelope-simulator/components/EnvelopeRow';
+import { suggestMultiEnvelopeName } from '@/features/multi-envelope-simulator/lib/suggestName';
 import type {
     AccountType,
     EnvelopeFormValues,
@@ -40,7 +41,7 @@ type MultiEnvelopeFormProps = MultiEnvelopeSimulatorPageProps;
 
 export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvelopeFormProps) {
     const { t, i18n } = useTranslation();
-    const { data, setData, post, processing, errors } = useForm<MultiEnvelopeFormValues>({
+    const { data, setData, post, processing, errors, setError, clearErrors } = useForm<MultiEnvelopeFormValues>({
         name: '',
         inflationRate: defaults.inflationRate,
         envelopes: [
@@ -58,7 +59,18 @@ export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvel
 
     const submit = (e: SubmitEvent) => {
         e.preventDefault();
+
+        if (data.name.trim() === '') {
+            setError('name', t('simulator.form.nameRequired'));
+            return;
+        }
+
         post(route('simulators.multi-envelope.run'));
+    };
+
+    const suggestName = () => {
+        setData('name', suggestMultiEnvelopeName(t, data.envelopes));
+        clearErrors('name');
     };
 
     const updateEnvelope = <K extends keyof EnvelopeFormValues>(index: number, field: K, value: EnvelopeFormValues[K]) => {
@@ -104,7 +116,18 @@ export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvel
                     <CardContent className="flex flex-col gap-6">
                         <div className="grid gap-4 sm:grid-cols-2">
                             <div className="flex flex-col gap-2">
-                                <Label htmlFor="name">{t('simulator.multiEnvelope.form.name')}</Label>
+                                <div className="flex items-center justify-between gap-2">
+                                    <Label htmlFor="name">{t('simulator.multiEnvelope.form.name')}</Label>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-brand hover:bg-brand/10 hover:text-brand"
+                                        onClick={suggestName}
+                                    >
+                                        {t('simulator.multiEnvelope.form.suggestName.button')}
+                                    </Button>
+                                </div>
                                 <Input
                                     id="name"
                                     name="name"
@@ -113,7 +136,10 @@ export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvel
                                     placeholder={t('simulator.multiEnvelope.form.namePlaceholder')}
                                     value={data.name}
                                     aria-invalid={Boolean(errors.name)}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) => {
+                                        setData('name', e.target.value);
+                                        clearErrors('name');
+                                    }}
                                 />
                                 {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                             </div>

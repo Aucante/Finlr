@@ -9,13 +9,14 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FIELD_CONFIG, FIELD_ORDER, type FieldKey } from '@/features/fire-simulator/lib/fields';
+import { suggestFireName } from '@/features/fire-simulator/lib/suggestName';
 import type { FireFormValues, FireSimulatorPageProps } from '@/features/fire-simulator/types';
 
 type FireFormProps = FireSimulatorPageProps;
 
 export default function FireForm({ defaults }: FireFormProps) {
     const { t } = useTranslation();
-    const { data, setData, post, processing, errors } = useForm<FireFormValues>({
+    const { data, setData, post, processing, errors, setError, clearErrors } = useForm<FireFormValues>({
         ...defaults,
         name: '',
     });
@@ -27,7 +28,18 @@ export default function FireForm({ defaults }: FireFormProps) {
 
     const submit = (e: SubmitEvent) => {
         e.preventDefault();
+
+        if (data.name.trim() === '') {
+            setError('name', t('simulator.form.nameRequired'));
+            return;
+        }
+
         post(route('simulators.fire.run'));
+    };
+
+    const suggestName = () => {
+        setData('name', suggestFireName(t, data.currentAge));
+        clearErrors('name');
     };
 
     const renderField = (fieldKey: FieldKey) => {
@@ -85,7 +97,18 @@ export default function FireForm({ defaults }: FireFormProps) {
                 </CardHeader>
                 <CardContent className="flex flex-col gap-6">
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="name">{t('simulator.fire.form.name')}</Label>
+                        <div className="flex items-center justify-between gap-2">
+                            <Label htmlFor="name">{t('simulator.fire.form.name')}</Label>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="text-brand hover:bg-brand/10 hover:text-brand"
+                                onClick={suggestName}
+                            >
+                                {t('simulator.fire.form.suggestName.button')}
+                            </Button>
+                        </div>
                         <Input
                             id="name"
                             name="name"
@@ -94,7 +117,10 @@ export default function FireForm({ defaults }: FireFormProps) {
                             placeholder={t('simulator.fire.form.namePlaceholder')}
                             value={data.name}
                             aria-invalid={Boolean(errors.name)}
-                            onChange={(e) => setData('name', e.target.value)}
+                            onChange={(e) => {
+                                setData('name', e.target.value);
+                                clearErrors('name');
+                            }}
                         />
                         {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                     </div>

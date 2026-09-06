@@ -211,13 +211,20 @@
             "openAriaLabel": "Open {{name}}",
             "columns": {
                 "name": "Scenario",
-                "wrapper": "Wrapper",
+                "type": "Type",
                 "horizon": "Horizon",
-                "date": "Date",
-                "amount": "Amount"
+                "date": "Date"
             },
             "calculatorTypes": {
-                "single_envelope": "Single-envelope"
+                "single_envelope": "Classic simulator",
+                "multi_envelope": "Multi-envelope",
+                "analogy": "Comparator",
+                "fire": "FIRE"
+            },
+            "pagination": {
+                "previous": "Previous page",
+                "next": "Next page",
+                "pageIndicator": "Page {{currentPage}} of {{lastPage}}"
             }
         },
         "promo": {
@@ -397,8 +404,12 @@
                 "COMPTE_COURANT": "Current account"
             },
             "form": {
-                "name": "Scenario name (optional)",
+                "name": "Scenario name",
                 "namePlaceholder": "PEA vs CTO — 20-year comparison",
+                "suggestName": {
+                    "button": "Suggest a name",
+                    "template": "{{accountTypeA}} vs {{accountTypeB}}"
+                },
                 "sections": {
                     "shared": "Shared parameters",
                     "scenarios": "Scenarios to compare"
@@ -439,13 +450,20 @@
             }
         },
         "calculationFailed": "The calculation could not complete. Please try again shortly.",
+        "form": {
+            "nameRequired": "The scenario name is required."
+        },
         "fire": {
             "eyebrow": "Financial independence",
             "title": "FIRE simulator",
             "description": "Estimate the capital you need to live off your investments and the age at which you could reach it.",
             "form": {
-                "name": "Scenario name (optional)",
+                "name": "Scenario name",
                 "namePlaceholder": "Financial independence at 55",
+                "suggestName": {
+                    "button": "Suggest a name",
+                    "template": "FIRE at {{age}} {{yearsUnit}} old"
+                },
                 "sections": {
                     "inputs": "Your parameters"
                 },
@@ -519,8 +537,15 @@
             "title": "Multi-envelope simulation",
             "description": "Combine several tax wrappers in a cascade and project their evolution together.",
             "form": {
-                "name": "Scenario name (optional)",
+                "name": "Scenario name",
                 "namePlaceholder": "PEA + CTO cascade — long-term plan",
+                "suggestName": {
+                    "button": "Suggest a name",
+                    "withDuration_one": "Multi-envelope ({{count}} pocket, {{years}} {{yearsUnit}})",
+                    "withDuration_other": "Multi-envelope ({{count}} pockets, {{years}} {{yearsUnit}})",
+                    "withoutDuration_one": "Multi-envelope ({{count}} pocket)",
+                    "withoutDuration_other": "Multi-envelope ({{count}} pockets)"
+                },
                 "sections": {
                     "name": "Scenario",
                     "envelopes": "Envelopes"
@@ -585,8 +610,12 @@
                 "cto": "Project how an investment grows in a single tax wrapper. No contribution cap, flat 30% tax regardless of holding period."
             },
             "form": {
-                "name": "Scenario name (optional)",
+                "name": "Scenario name",
                 "namePlaceholder": "{{wrapper}} — long-term plan",
+                "suggestName": {
+                    "button": "Suggest a name",
+                    "template": "{{wrapper}} over {{years}} {{yearsUnit}}"
+                },
                 "sections": {
                     "capital": "Capital & contributions",
                     "performance": "Returns & fees",

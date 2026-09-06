@@ -82,15 +82,17 @@ class RunFireProjectionTest extends TestCase
         $this->assertArrayHasKey('requiredCapital', $scenario->result_payload['optimistic']);
     }
 
-    public function test_a_scenario_created_without_a_name_has_name_null_in_the_database(): void
+    public function test_a_scenario_submitted_without_a_name_is_rejected(): void
     {
         $user = User::factory()->create(['subscription_plan' => Plan::PRO_MONTHLY]);
 
-        $this->actingAs($user)->post('/simulators/fire', $this->validPayload());
+        $payload = $this->validPayload();
+        unset($payload['name']);
 
-        $scenario = Scenario::sole();
+        $response = $this->actingAs($user)->post('/simulators/fire', $payload);
 
-        $this->assertNull($scenario->name);
+        $response->assertSessionHasErrors('name');
+        $this->assertDatabaseCount('scenarios', 0);
     }
 
     public function test_a_scenario_created_with_a_name_stores_it_as_is(): void
@@ -172,6 +174,7 @@ class RunFireProjectionTest extends TestCase
     private function validPayload(): array
     {
         return [
+            'name' => 'Indépendance à 55 ans',
             'currentAge' => 30,
             'currentCapital' => 10_000,
             'monthlyContribution' => 500,
