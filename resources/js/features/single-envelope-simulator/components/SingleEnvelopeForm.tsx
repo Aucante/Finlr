@@ -161,7 +161,13 @@ export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: 
                                         <Label htmlFor="name">
                                             {t('simulator.singleEnvelope.form.name')}
                                         </Label>
-                                        <Button type="button" variant="ghost" size="sm" onClick={suggestName}>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="text-brand hover:bg-brand/10 hover:text-brand"
+                                            onClick={suggestName}
+                                        >
                                             {t('simulator.singleEnvelope.form.suggestName.button')}
                                         </Button>
                                     </div>

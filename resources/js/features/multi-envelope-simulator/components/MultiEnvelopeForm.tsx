@@ -118,7 +118,13 @@ export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvel
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center justify-between gap-2">
                                     <Label htmlFor="name">{t('simulator.multiEnvelope.form.name')}</Label>
-                                    <Button type="button" variant="ghost" size="sm" onClick={suggestName}>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-brand hover:bg-brand/10 hover:text-brand"
+                                        onClick={suggestName}
+                                    >
                                         {t('simulator.multiEnvelope.form.suggestName.button')}
                                     </Button>
                                 </div>

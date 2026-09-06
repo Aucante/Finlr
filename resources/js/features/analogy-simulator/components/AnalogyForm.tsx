@@ -103,7 +103,13 @@ export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps
                     <div className="flex flex-col gap-2">
                         <div className="flex items-center justify-between gap-2">
                             <Label htmlFor="name">{t('simulator.analogy.form.name')}</Label>
-                            <Button type="button" variant="ghost" size="sm" onClick={suggestName}>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="text-brand hover:bg-brand/10 hover:text-brand"
+                                onClick={suggestName}
+                            >
                                 {t('simulator.analogy.form.suggestName.button')}
                             </Button>
                         </div>
