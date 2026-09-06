@@ -211,13 +211,15 @@
             "openAriaLabel": "Open {{name}}",
             "columns": {
                 "name": "Scenario",
-                "wrapper": "Wrapper",
+                "type": "Type",
                 "horizon": "Horizon",
-                "date": "Date",
-                "amount": "Amount"
+                "date": "Date"
             },
             "calculatorTypes": {
-                "single_envelope": "Single-envelope"
+                "single_envelope": "Classic simulator",
+                "multi_envelope": "Multi-envelope",
+                "analogy": "Comparator",
+                "fire": "FIRE"
             }
         },
         "promo": {
@@ -397,7 +399,7 @@
                 "COMPTE_COURANT": "Current account"
             },
             "form": {
-                "name": "Scenario name (optional)",
+                "name": "Scenario name",
                 "namePlaceholder": "PEA vs CTO — 20-year comparison",
                 "sections": {
                     "shared": "Shared parameters",
@@ -444,7 +446,7 @@
             "title": "FIRE simulator",
             "description": "Estimate the capital you need to live off your investments and the age at which you could reach it.",
             "form": {
-                "name": "Scenario name (optional)",
+                "name": "Scenario name",
                 "namePlaceholder": "Financial independence at 55",
                 "sections": {
                     "inputs": "Your parameters"
@@ -519,7 +521,7 @@
             "title": "Multi-envelope simulation",
             "description": "Combine several tax wrappers in a cascade and project their evolution together.",
             "form": {
-                "name": "Scenario name (optional)",
+                "name": "Scenario name",
                 "namePlaceholder": "PEA + CTO cascade — long-term plan",
                 "sections": {
                     "name": "Scenario",
@@ -585,7 +587,7 @@
                 "cto": "Project how an investment grows in a single tax wrapper. No contribution cap, flat 30% tax regardless of holding period."
             },
             "form": {
-                "name": "Scenario name (optional)",
+                "name": "Scenario name",
                 "namePlaceholder": "{{wrapper}} — long-term plan",
                 "sections": {
                     "capital": "Capital & contributions",

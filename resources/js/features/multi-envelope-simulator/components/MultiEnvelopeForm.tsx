@@ -109,6 +109,7 @@ export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvel
                                     id="name"
                                     name="name"
                                     type="text"
+                                    required
                                     maxLength={255}
                                     placeholder={t('simulator.multiEnvelope.form.namePlaceholder')}
                                     value={data.name}

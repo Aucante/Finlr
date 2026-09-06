@@ -90,6 +90,7 @@ export default function FireForm({ defaults }: FireFormProps) {
                             id="name"
                             name="name"
                             type="text"
+                            required
                             maxLength={255}
                             placeholder={t('simulator.fire.form.namePlaceholder')}
                             value={data.name}

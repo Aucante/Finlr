@@ -1,18 +1,26 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import i18n from '@/i18n';
 
 const postMock = vi.fn();
 
+// A stateful mock: name is required now (native `required` attribute), so
+// the "submits" test below must be able to actually fill it in before
+// clicking submit — a frozen `data` would keep the field empty forever.
 vi.mock('@inertiajs/react', () => ({
-    useForm: (initialValues: Record<string, unknown>) => ({
-        data: initialValues,
-        setData: vi.fn(),
-        post: postMock,
-        processing: false,
-        errors: {},
-    }),
+    useForm: (initialValues: Record<string, unknown>) => {
+        const [data, setDataState] = useState(initialValues);
+
+        return {
+            data,
+            setData: (key: string, value: unknown) => setDataState((prev) => ({ ...prev, [key]: value })),
+            post: postMock,
+            processing: false,
+            errors: {},
+        };
+    },
 }));
 
 import SingleEnvelopeForm from '@/features/single-envelope-simulator/components/SingleEnvelopeForm';
@@ -79,11 +87,9 @@ describe('SingleEnvelopeForm', () => {
 
         expect(screen.getByText(i18n.t('simulator.singleEnvelope.form.summary.scenarioPlaceholder'))).toBeInTheDocument();
 
-        await user.type(screen.getByLabelText(i18n.t('simulator.singleEnvelope.form.name')), 'a');
+        await user.type(screen.getByLabelText(i18n.t('simulator.singleEnvelope.form.name')), 'Retraite à 62 ans');
 
-        // The mocked useForm keeps `data` frozen at its initial value, so
-        // typing does not actually update the displayed name here — this
-        // only asserts the field accepts input without throwing.
+        expect(screen.getByText('Retraite à 62 ans')).toBeInTheDocument();
         expect(postMock).not.toHaveBeenCalled();
     });
 
@@ -91,6 +97,7 @@ describe('SingleEnvelopeForm', () => {
         const user = userEvent.setup();
         render(<SingleEnvelopeForm defaults={defaults} jurisdiction="france" wrapper="cto" />);
 
+        await user.type(screen.getByLabelText(i18n.t('simulator.singleEnvelope.form.name')), 'Retraite à 62 ans');
         await user.click(
             screen.getByRole('button', { name: i18n.t('simulator.singleEnvelope.form.submit') }),
         );

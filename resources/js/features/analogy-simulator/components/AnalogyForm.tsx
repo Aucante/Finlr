@@ -94,6 +94,7 @@ export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps
                             id="name"
                             name="name"
                             type="text"
+                            required
                             maxLength={255}
                             placeholder={t('simulator.analogy.form.namePlaceholder')}
                             value={data.name}

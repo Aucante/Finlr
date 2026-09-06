@@ -46,6 +46,7 @@ class ScenarioSummaryDataTest extends TestCase
         $this->assertSame([
             'id' => $scenario->id,
             'calculatorType' => 'single_envelope',
+            'typeLabel' => 'dashboard.scenarioList.calculatorTypes.single_envelope',
             'headlineFigure' => 31234.56,
             'createdAt' => $scenario->created_at->toISOString(),
             'wrapper' => 'pea',

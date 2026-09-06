@@ -152,6 +152,7 @@ export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: 
                                         id="name"
                                         name="name"
                                         type="text"
+                                        required
                                         maxLength={255}
                                         placeholder={t('simulator.singleEnvelope.form.namePlaceholder', {
                                             wrapper: wrapperLabel,

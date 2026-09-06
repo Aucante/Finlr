@@ -18,6 +18,17 @@ enum CalculatorType: string
     case Fire = 'fire';
 
     /**
+     * Frontend-facing i18n key for this case's label in the dashboard's
+     * scenario list ("Type" column) — a translation key, not the display
+     * text itself, so the actual wording stays centralised in
+     * lang/{fr,en,it}.json (react-i18next), not duplicated here.
+     */
+    public function label(): string
+    {
+        return 'dashboard.scenarioList.calculatorTypes.'.$this->value;
+    }
+
+    /**
      * Extraction minimale des 3 champs affichés par la liste de scénarios
      * du dashboard, à partir des payloads bruts stockés en base — chaque
      * cas lit une forme de payload différente (miroir de son propre DTO

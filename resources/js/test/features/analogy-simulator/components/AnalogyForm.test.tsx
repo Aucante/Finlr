@@ -1,18 +1,26 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import i18n from '@/i18n';
 
 const postMock = vi.fn();
 
+// A stateful mock: name is required now (native `required` attribute), so
+// the "submits" test below must be able to actually fill it in before
+// clicking submit — a frozen `data` would keep the field empty forever.
 vi.mock('@inertiajs/react', () => ({
-    useForm: (initialValues: Record<string, unknown>) => ({
-        data: initialValues,
-        setData: vi.fn(),
-        post: postMock,
-        processing: false,
-        errors: {},
-    }),
+    useForm: (initialValues: Record<string, unknown>) => {
+        const [data, setDataState] = useState(initialValues);
+
+        return {
+            data,
+            setData: (key: string, value: unknown) => setDataState((prev) => ({ ...prev, [key]: value })),
+            post: postMock,
+            processing: false,
+            errors: {},
+        };
+    },
 }));
 
 import AnalogyForm from '@/features/analogy-simulator/components/AnalogyForm';
@@ -67,6 +75,7 @@ describe('AnalogyForm', () => {
         const user = userEvent.setup();
         render(<AnalogyForm defaults={defaults} accountTypes={accountTypes} />);
 
+        await user.type(screen.getByLabelText(i18n.t('simulator.analogy.form.name')), 'PEA vs CTO à 20 ans');
         await user.click(screen.getByRole('button', { name: i18n.t('simulator.analogy.form.submit') }));
 
         expect(postMock).toHaveBeenCalledWith('/simulators.analogy.run');

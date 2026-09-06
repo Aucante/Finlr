@@ -29,7 +29,7 @@ class RunSingleEnvelopeSimulationRequest extends FormRequest
             'taxRate' => ['required', 'numeric', 'min:0', 'max:100'],
             'inflationRate' => ['required', 'numeric', 'min:0', 'max:100'],
             'inflationEnabled' => ['required', 'boolean'],
-            'name' => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
         ];
     }
 

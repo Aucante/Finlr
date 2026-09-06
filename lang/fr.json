@@ -211,13 +211,15 @@
             "openAriaLabel": "Ouvrir {{name}}",
             "columns": {
                 "name": "Scénario",
-                "wrapper": "Enveloppe",
+                "type": "Type",
                 "horizon": "Horizon",
-                "date": "Date",
-                "amount": "Montant"
+                "date": "Date"
             },
             "calculatorTypes": {
-                "single_envelope": "Mono-enveloppe"
+                "single_envelope": "Simulateur classique",
+                "multi_envelope": "Multi-enveloppe",
+                "analogy": "Comparateur",
+                "fire": "FIRE"
             }
         },
         "promo": {
@@ -397,7 +399,7 @@
                 "COMPTE_COURANT": "Compte courant"
             },
             "form": {
-                "name": "Nom du scénario (facultatif)",
+                "name": "Nom du scénario",
                 "namePlaceholder": "PEA vs CTO — comparaison 20 ans",
                 "sections": {
                     "shared": "Paramètres partagés",
@@ -444,7 +446,7 @@
             "title": "Simulateur FIRE",
             "description": "Estimez le capital nécessaire pour vivre de vos revenus et l'âge auquel vous pourriez l'atteindre.",
             "form": {
-                "name": "Nom du scénario (facultatif)",
+                "name": "Nom du scénario",
                 "namePlaceholder": "Indépendance à 55 ans",
                 "sections": {
                     "inputs": "Vos paramètres"
@@ -519,7 +521,7 @@
             "title": "Simulation multi-enveloppe",
             "description": "Combinez plusieurs enveloppes fiscales en cascade et projetez leur évolution ensemble.",
             "form": {
-                "name": "Nom du scénario (facultatif)",
+                "name": "Nom du scénario",
                 "namePlaceholder": "Cascade PEA + CTO — plan long terme",
                 "sections": {
                     "name": "Scénario",
@@ -585,7 +587,7 @@
                 "cto": "Projetez l’évolution d’un placement sur une enveloppe fiscale unique. Aucun plafond de versement, prélèvement forfaitaire unique de 30 % quelle que soit la durée de détention."
             },
             "form": {
-                "name": "Nom du scénario (facultatif)",
+                "name": "Nom du scénario",
                 "namePlaceholder": "{{wrapper}} — plan long terme",
                 "sections": {
                     "capital": "Capital & versements",

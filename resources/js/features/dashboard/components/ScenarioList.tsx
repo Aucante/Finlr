@@ -5,12 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDate } from '@/features/dashboard/lib/format';
 import type { ScenarioSummary } from '@/features/dashboard/types';
-import { formatCurrency } from '@/lib/currency';
 import { cn } from '@/lib/utils';
 
-const KNOWN_WRAPPERS = ['pea', 'cto', 'av'] as const;
-
-const GRID_COLUMNS = 'sm:grid-cols-[1.6fr_0.8fr_0.8fr_1fr_auto_1.25rem]';
+const GRID_COLUMNS = 'sm:grid-cols-[1.6fr_1fr_0.8fr_1fr_1.25rem]';
 
 interface ScenarioListProps {
     scenarios: ScenarioSummary[];
@@ -19,18 +16,6 @@ interface ScenarioListProps {
 export default function ScenarioList({ scenarios }: ScenarioListProps) {
     const { t, i18n } = useTranslation();
     const locale = i18n.resolvedLanguage;
-
-    // A known code (pea/cto/av) is translated; an empty wrapper (e.g. a
-    // multi-envelope cascade, which has no single envelope type) falls
-    // back to "—"; anything else non-empty (e.g. Analogy's "labelA vs
-    // labelB") is shown as-is rather than discarded.
-    const formatWrapper = (wrapper: string): string => {
-        if ((KNOWN_WRAPPERS as readonly string[]).includes(wrapper)) {
-            return t(`form.wrappers.${wrapper}`);
-        }
-
-        return wrapper !== '' ? wrapper : '—';
-    };
 
     const formatHorizon = (years: number): string =>
         years > 0 ? `${years} ${t('form.yearsUnit', { count: years })}` : '—';
@@ -57,17 +42,16 @@ export default function ScenarioList({ scenarios }: ScenarioListProps) {
                             )}
                         >
                             <span>{t('dashboard.scenarioList.columns.name')}</span>
-                            <span className="text-center">{t('dashboard.scenarioList.columns.wrapper')}</span>
+                            <span className="text-center">{t('dashboard.scenarioList.columns.type')}</span>
                             <span className="text-center">{t('dashboard.scenarioList.columns.horizon')}</span>
                             <span className="text-center">{t('dashboard.scenarioList.columns.date')}</span>
-                            <span className="text-right">{t('dashboard.scenarioList.columns.amount')}</span>
                             {/* No label: icon-only "open" column, described per-row via the link's aria-label. */}
                             <span aria-hidden />
                         </div>
                         <ul className="flex flex-col divide-y divide-border">
                             {scenarios.map((scenario) => {
                                 const displayName = scenario.name ?? t('dashboard.scenarioList.genericLabel');
-                                const wrapperLabel = formatWrapper(scenario.wrapper);
+                                const typeLabel = t(scenario.typeLabel);
                                 const horizonLabel = formatHorizon(scenario.years);
                                 const dateLabel = formatDate(scenario.createdAt, locale);
 
@@ -81,29 +65,24 @@ export default function ScenarioList({ scenarios }: ScenarioListProps) {
                                                 GRID_COLUMNS,
                                             )}
                                         >
-                                            <div className="flex items-center justify-between gap-4 sm:contents">
-                                                <span className="font-medium group-hover:text-brand sm:order-1">
-                                                    {displayName}
-                                                </span>
-                                                <span className="font-mono font-medium text-brand tabular-nums sm:order-5 sm:text-right [text-shadow:0_0_24px_var(--brand)]">
-                                                    {formatCurrency(scenario.headlineFigure, locale)}
-                                                </span>
-                                            </div>
+                                            <span className="font-medium group-hover:text-brand sm:order-1">
+                                                {displayName}
+                                            </span>
                                             <span className="text-xs text-muted-foreground sm:hidden">
-                                                {wrapperLabel} · {horizonLabel} · {dateLabel}
+                                                {typeLabel} · {horizonLabel} · {dateLabel}
                                             </span>
-                                            <span className="hidden ms-5 text-center text-muted-foreground sm:order-2 sm:block">
-                                                {wrapperLabel}
+                                            <span className="hidden text-center text-muted-foreground sm:order-2 sm:block">
+                                                {typeLabel}
                                             </span>
-                                            <span className="hidden ms-7 text-center text-muted-foreground sm:order-3 sm:block">
+                                            <span className="hidden text-center text-muted-foreground sm:order-3 sm:block">
                                                 {horizonLabel}
                                             </span>
-                                            <span className="hidden ms-9 text-center text-muted-foreground sm:order-4 sm:block">
+                                            <span className="hidden text-center text-muted-foreground sm:order-4 sm:block">
                                                 {dateLabel}
                                             </span>
                                             <ArrowRight
                                                 aria-hidden
-                                                className="hidden size-4 shrink-0 text-muted-foreground transition-colors sm:order-6 sm:block sm:justify-self-end group-hover:text-brand"
+                                                className="hidden size-4 shrink-0 text-muted-foreground transition-colors sm:order-5 sm:block sm:justify-self-end group-hover:text-brand"
                                             />
                                         </Link>
                                     </li>

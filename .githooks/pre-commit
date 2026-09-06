@@ -1,0 +1,35 @@
+#!/bin/sh
+# .git/hooks/pre-commit
+
+echo "🔍 [Reviewer] Vérification des fichiers modifiés..."
+
+# 1. Extraire la liste des fichiers PHP modifiés
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.php$')
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "✅ Aucun fichier PHP modifié."
+    exit 0
+fi
+
+# 2. Vérification de la syntaxe et du typage via PHPStan
+echo "⚙️ Analyse statique PHPStan..."
+./vendor/bin/phpstan analyse $STAGED_FILES --level=8 --no-progress
+if [ $? -ne 0 ]; then
+    echo "❌ [REJETÉ] PHPStan a détecté des erreurs. Correction requise avant commit."
+    exit 1
+fi
+
+# 3. Revue par l'Agent IA
+echo "🤖 Revue par l'Agent IA..."
+DIFF_DATA=$(git diff --cached $STAGED_FILES)
+
+REVIEW_RESULT=$(claude -p "Tu es un Reviewer Sécurité/Code PHP 8.3. Analyse ce git diff et cherche uniquement : 1/ Failles de sécurité (XSS, injections, fuite de secrets), 2/ Non-respect des DTOs/Typage strict. Si tout est OK, réponds 'VALIDE'. Sinon réponds 'REJETÉ' suivi d'un résumé concis des problèmes." "$DIFF_DATA")
+
+if echo "$REVIEW_RESULT" | grep -q "REJETÉ"; then
+    echo "❌ [REJETÉ PAR LE REVIEWER IA] :"
+    echo "$REVIEW_RESULT"
+    exit 1
+fi
+
+echo "✅ [VALIDE] Commit autorisé."
+exit 0

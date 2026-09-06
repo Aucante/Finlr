@@ -151,6 +151,7 @@ describe('Dashboard page', () => {
             {
                 id: 1,
                 calculatorType: 'single_envelope',
+                typeLabel: 'dashboard.scenarioList.calculatorTypes.single_envelope',
                 headlineFigure: 31234.56,
                 createdAt: '2026-01-15T10:00:00.000000Z',
                 wrapper: 'pea',

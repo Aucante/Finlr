@@ -211,13 +211,15 @@
             "openAriaLabel": "Apri {{name}}",
             "columns": {
                 "name": "Scenario",
-                "wrapper": "Involucro",
+                "type": "Tipo",
                 "horizon": "Orizzonte",
-                "date": "Data",
-                "amount": "Importo"
+                "date": "Data"
             },
             "calculatorTypes": {
-                "single_envelope": "Mono-involucro"
+                "single_envelope": "Simulatore classico",
+                "multi_envelope": "Multi-involucro",
+                "analogy": "Comparatore",
+                "fire": "FIRE"
             }
         },
         "promo": {
@@ -397,7 +399,7 @@
                 "COMPTE_COURANT": "Conto corrente"
             },
             "form": {
-                "name": "Nome dello scenario (facoltativo)",
+                "name": "Nome dello scenario",
                 "namePlaceholder": "PEA vs CTO — confronto a 20 anni",
                 "sections": {
                     "shared": "Parametri condivisi",
@@ -444,7 +446,7 @@
             "title": "Simulatore FIRE",
             "description": "Stima il capitale necessario per vivere delle tue rendite e l'età in cui potresti raggiungerlo.",
             "form": {
-                "name": "Nome dello scenario (facoltativo)",
+                "name": "Nome dello scenario",
                 "namePlaceholder": "Indipendenza finanziaria a 55 anni",
                 "sections": {
                     "inputs": "I tuoi parametri"
@@ -519,7 +521,7 @@
             "title": "Simulazione multi-involucro",
             "description": "Combina più involucri fiscali in cascata e proietta la loro evoluzione insieme.",
             "form": {
-                "name": "Nome dello scenario (facoltativo)",
+                "name": "Nome dello scenario",
                 "namePlaceholder": "Cascata PEA + CTO — piano a lungo termine",
                 "sections": {
                     "name": "Scenario",
@@ -585,7 +587,7 @@
                 "cto": "Proietta l'evoluzione di un investimento in un unico contenitore fiscale. Nessun massimale di versamento, imposta forfettaria unica del 30 % indipendentemente dalla durata di detenzione."
             },
             "form": {
-                "name": "Nome dello scenario (facoltativo)",
+                "name": "Nome dello scenario",
                 "namePlaceholder": "{{wrapper}} — piano a lungo termine",
                 "sections": {
                     "capital": "Capitale & versamenti",
