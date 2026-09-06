@@ -1,3 +1,5 @@
+import type { Paginated } from '@/types';
+
 export type CalculatorType = 'single_envelope' | 'multi_envelope' | 'analogy' | 'fire';
 
 export interface ScenarioSummary {
@@ -17,5 +19,5 @@ export interface ScenarioSummary {
 }
 
 export interface DashboardPageProps {
-    scenarios: ScenarioSummary[];
+    scenarios: Paginated<ScenarioSummary>;
 }

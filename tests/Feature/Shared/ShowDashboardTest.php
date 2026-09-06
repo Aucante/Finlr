@@ -12,7 +12,7 @@ class ShowDashboardTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_the_dashboard_receives_the_scenarios_prop_with_the_right_count_for_the_current_user(): void
+    public function test_the_dashboard_receives_the_scenarios_prop_with_the_right_total_for_the_current_user(): void
     {
         $user = User::factory()->create();
         $other = User::factory()->create();
@@ -25,7 +25,40 @@ class ShowDashboardTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn (Assert $page) => $page
             ->component('Dashboard')
-            ->has('scenarios', 3)
+            ->has('scenarios.data', 3)
+            ->where('scenarios.total', 3)
+            ->where('scenarios.currentPage', 1)
+            ->where('scenarios.lastPage', 1)
+            ->where('scenarios.perPage', 10)
+        );
+    }
+
+    public function test_a_page_is_capped_at_ten_scenarios(): void
+    {
+        $user = User::factory()->create();
+        Scenario::factory()->count(11)->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Dashboard')
+            ->has('scenarios.data', 10)
+            ->where('scenarios.total', 11)
+            ->where('scenarios.lastPage', 2)
+        );
+    }
+
+    public function test_the_second_page_is_reached_via_the_page_query_parameter(): void
+    {
+        $user = User::factory()->create();
+        Scenario::factory()->count(11)->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->get(route('dashboard', ['page' => 2]));
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Dashboard')
+            ->has('scenarios.data', 1)
+            ->where('scenarios.currentPage', 2)
         );
     }
 }

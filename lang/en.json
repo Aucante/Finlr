@@ -220,6 +220,11 @@
                 "multi_envelope": "Multi-envelope",
                 "analogy": "Comparator",
                 "fire": "FIRE"
+            },
+            "pagination": {
+                "previous": "Previous page",
+                "next": "Next page",
+                "pageIndicator": "Page {{currentPage}} of {{lastPage}}"
             }
         },
         "promo": {
