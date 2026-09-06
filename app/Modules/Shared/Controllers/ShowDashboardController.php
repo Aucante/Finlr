@@ -12,8 +12,15 @@ class ShowDashboardController extends Controller
 {
     public function __invoke(Request $request, ListUserScenariosAction $listScenarios): Response
     {
+        $user = $request->user();
+
+        // The route sits behind the `auth` middleware, so $user is never null
+        // in practice; PHPStan still needs this explicit proof to allow
+        // passing a non-nullable User to ListUserScenariosAction::handle().
+        abort_if($user === null, 403);
+
         return Inertia::render('Dashboard', [
-            'scenarios' => PaginatedData::fromPaginator($listScenarios->handle($request->user()))->toArray(),
+            'scenarios' => PaginatedData::fromPaginator($listScenarios->handle($user))->toArray(),
         ]);
     }
 }
