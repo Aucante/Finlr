@@ -117,15 +117,17 @@ class RunAnalogyComparisonTest extends TestCase
         $this->assertCount(20, $scenario->result_payload['yearlyBreakdown']);
     }
 
-    public function test_a_scenario_created_without_a_name_has_name_null_in_the_database(): void
+    public function test_a_scenario_submitted_without_a_name_is_rejected(): void
     {
         $user = User::factory()->create(['subscription_plan' => Plan::PRO_MONTHLY]);
 
-        $this->actingAs($user)->post('/simulators/analogy', $this->validPayload());
+        $payload = $this->validPayload();
+        unset($payload['name']);
 
-        $scenario = Scenario::sole();
+        $response = $this->actingAs($user)->post('/simulators/analogy', $payload);
 
-        $this->assertNull($scenario->name);
+        $response->assertSessionHasErrors('name');
+        $this->assertDatabaseCount('scenarios', 0);
     }
 
     public function test_a_scenario_created_with_a_name_stores_it_as_is(): void
@@ -204,6 +206,7 @@ class RunAnalogyComparisonTest extends TestCase
     private function validPayload(): array
     {
         return [
+            'name' => 'PEA vs CTO à 20 ans',
             'accountTypeA' => 'PEA',
             'accountTypeB' => 'CTO',
             'initialAmount' => 0,

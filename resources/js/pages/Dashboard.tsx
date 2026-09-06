@@ -1,5 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Check } from 'lucide-react';
+import { Check, Flame, Layers, PiggyBank, Scale } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
@@ -51,11 +51,10 @@ export default function Dashboard({ scenarios }: DashboardPageProps) {
                     its own row under grid-cols-3. */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <SimulatorCard
-                        index={1}
+                        icon={PiggyBank}
                         title={t('dashboard.simulators.singleEnvelope.title')}
                         description={t('dashboard.simulators.singleEnvelope.description')}
                         state={canAccessAdvancedCalculator ? 'active' : 'locked'}
-                        showDecorativeChart
                         href={
                             canAccessAdvancedCalculator
                                 ? route('simulators.single-envelope.choose')
@@ -68,7 +67,7 @@ export default function Dashboard({ scenarios }: DashboardPageProps) {
                         }
                     />
                     <SimulatorCard
-                        index={2}
+                        icon={Layers}
                         title={t('dashboard.simulators.multiEnvelope.title')}
                         description={t('dashboard.simulators.multiEnvelope.description')}
                         state={canAccessAdvancedCalculator ? 'active' : 'locked'}
@@ -84,7 +83,7 @@ export default function Dashboard({ scenarios }: DashboardPageProps) {
                         }
                     />
                     <SimulatorCard
-                        index={3}
+                        icon={Scale}
                         title={t('dashboard.simulators.analogy.title')}
                         description={t('dashboard.simulators.analogy.description')}
                         state={canAccessAdvancedCalculator ? 'active' : 'locked'}
@@ -96,7 +95,7 @@ export default function Dashboard({ scenarios }: DashboardPageProps) {
                         }
                     />
                     <SimulatorCard
-                        index={4}
+                        icon={Flame}
                         title={t('dashboard.simulators.fire.title')}
                         description={t('dashboard.simulators.fire.description')}
                         state={canAccessAdvancedCalculator ? 'active' : 'locked'}

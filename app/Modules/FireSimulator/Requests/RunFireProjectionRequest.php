@@ -30,7 +30,7 @@ class RunFireProjectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'currentAge' => ['required', 'integer'],
             'currentCapital' => ['required', 'numeric'],
             'monthlyContribution' => ['required', 'numeric'],

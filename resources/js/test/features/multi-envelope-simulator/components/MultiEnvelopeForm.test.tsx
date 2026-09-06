@@ -1,18 +1,40 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import i18n from '@/i18n';
 
 const postMock = vi.fn();
 
+// A stateful mock: the "submits" test below must be able to actually fill
+// the name in before clicking submit (a frozen `data` would keep the field
+// empty forever), and the client-side name validation in the component
+// calls setError/clearErrors, which a frozen `errors` couldn't reflect.
 vi.mock('@inertiajs/react', () => ({
-    useForm: (initialValues: Record<string, unknown>) => ({
-        data: initialValues,
-        setData: vi.fn(),
-        post: postMock,
-        processing: false,
-        errors: {},
-    }),
+    useForm: (initialValues: Record<string, unknown>) => {
+        const [data, setDataState] = useState(initialValues);
+        const [errors, setErrorsState] = useState<Record<string, string>>({});
+
+        return {
+            data,
+            setData: (key: string, value: unknown) => setDataState((prev) => ({ ...prev, [key]: value })),
+            errors,
+            setError: (key: string, value: string) => setErrorsState((prev) => ({ ...prev, [key]: value })),
+            clearErrors: (...keys: string[]) =>
+                setErrorsState((prev) => {
+                    if (keys.length === 0) {
+                        return {};
+                    }
+
+                    const next = { ...prev };
+                    keys.forEach((key) => delete next[key]);
+
+                    return next;
+                }),
+            post: postMock,
+            processing: false,
+        };
+    },
 }));
 
 import MultiEnvelopeForm from '@/features/multi-envelope-simulator/components/MultiEnvelopeForm';
@@ -88,8 +110,40 @@ describe('MultiEnvelopeForm', () => {
         const user = userEvent.setup();
         render(<MultiEnvelopeForm defaults={defaults} accountTypes={accountTypes} />);
 
+        await user.type(screen.getByLabelText(i18n.t('simulator.multiEnvelope.form.name')), 'Cascade PEA + CTO');
         await user.click(screen.getByRole('button', { name: i18n.t('simulator.multiEnvelope.form.submit') }));
 
         expect(postMock).toHaveBeenCalledWith('/simulators.multi-envelope.run');
+    });
+
+    it('blocks submission and shows an application error when the name is left empty', async () => {
+        const user = userEvent.setup();
+        render(<MultiEnvelopeForm defaults={defaults} accountTypes={accountTypes} />);
+
+        await user.click(screen.getByRole('button', { name: i18n.t('simulator.multiEnvelope.form.submit') }));
+
+        expect(screen.getByText(i18n.t('simulator.form.nameRequired'))).toBeInTheDocument();
+        expect(postMock).not.toHaveBeenCalled();
+    });
+
+    it('clears the name error as soon as the user edits the field', async () => {
+        const user = userEvent.setup();
+        render(<MultiEnvelopeForm defaults={defaults} accountTypes={accountTypes} />);
+
+        await user.click(screen.getByRole('button', { name: i18n.t('simulator.multiEnvelope.form.submit') }));
+        expect(screen.getByText(i18n.t('simulator.form.nameRequired'))).toBeInTheDocument();
+
+        await user.type(screen.getByLabelText(i18n.t('simulator.multiEnvelope.form.name')), 'C');
+
+        expect(screen.queryByText(i18n.t('simulator.form.nameRequired'))).not.toBeInTheDocument();
+    });
+
+    it('fills the name field with a suggested name when clicking "Suggérer un nom"', async () => {
+        const user = userEvent.setup();
+        render(<MultiEnvelopeForm defaults={defaults} accountTypes={accountTypes} />);
+
+        await user.click(screen.getByRole('button', { name: i18n.t('simulator.multiEnvelope.form.suggestName.button') }));
+
+        expect(screen.getByLabelText(i18n.t('simulator.multiEnvelope.form.name'))).toHaveValue('Multi-enveloppe (2 poches, 15 ans)');
     });
 });

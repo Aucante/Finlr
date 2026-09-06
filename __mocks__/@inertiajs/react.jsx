@@ -60,3 +60,7 @@ export function useForm(initialValues) {
 export function usePage() {
     return { props: {} };
 }
+
+export const router = {
+    get: vi.fn(),
+};

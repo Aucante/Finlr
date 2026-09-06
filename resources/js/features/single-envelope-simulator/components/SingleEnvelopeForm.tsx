@@ -15,6 +15,7 @@ import {
     groupFieldsForLayout,
     type FormFieldKey,
 } from '@/features/single-envelope-simulator/lib/formFields';
+import { suggestSingleEnvelopeName } from '@/features/single-envelope-simulator/lib/suggestName';
 import type {
     Jurisdiction,
     SingleEnvelopeFormDefaults,
@@ -56,7 +57,7 @@ interface SingleEnvelopeFormProps {
 
 export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: SingleEnvelopeFormProps) {
     const { t } = useTranslation();
-    const { data, setData, post, processing, errors } = useForm<SingleEnvelopeFormValues>({
+    const { data, setData, post, processing, errors, setError, clearErrors } = useForm<SingleEnvelopeFormValues>({
         ...defaults,
         name: '',
     });
@@ -69,7 +70,18 @@ export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: 
 
     const submit = (e: SubmitEvent) => {
         e.preventDefault();
+
+        if (data.name.trim() === '') {
+            setError('name', t('simulator.form.nameRequired'));
+            return;
+        }
+
         post(route('simulators.single-envelope.run', { jurisdiction, wrapper }));
+    };
+
+    const suggestName = () => {
+        setData('name', suggestSingleEnvelopeName(t, wrapper, data.years));
+        clearErrors('name');
     };
 
     const renderField = (fieldKey: FormFieldKey) => {
@@ -145,9 +157,20 @@ export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: 
                         <CardContent className="flex flex-col gap-6">
                             {index === 0 && (
                                 <div className="flex flex-col gap-2">
-                                    <Label htmlFor="name">
-                                        {t('simulator.singleEnvelope.form.name')}
-                                    </Label>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <Label htmlFor="name">
+                                            {t('simulator.singleEnvelope.form.name')}
+                                        </Label>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="text-brand hover:bg-brand/10 hover:text-brand"
+                                            onClick={suggestName}
+                                        >
+                                            {t('simulator.singleEnvelope.form.suggestName.button')}
+                                        </Button>
+                                    </div>
                                     <Input
                                         id="name"
                                         name="name"
@@ -158,7 +181,10 @@ export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: 
                                         })}
                                         value={data.name}
                                         aria-invalid={Boolean(errors.name)}
-                                        onChange={(e) => setData('name', e.target.value)}
+                                        onChange={(e) => {
+                                            setData('name', e.target.value);
+                                            clearErrors('name');
+                                        }}
                                     />
                                     {errors.name && (
                                         <p className="text-xs text-destructive">{errors.name}</p>

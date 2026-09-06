@@ -39,13 +39,14 @@ readonly class ScenarioSummaryData
     }
 
     /**
-     * @return array{id: int, calculatorType: string, headlineFigure: float, createdAt: string|null, wrapper: string, years: int, name: string|null}
+     * @return array{id: int, calculatorType: string, typeLabel: string, headlineFigure: float, createdAt: string|null, wrapper: string, years: int, name: string|null}
      */
     public function toArray(): array
     {
         return [
             'id' => $this->id,
             'calculatorType' => $this->calculatorType->value,
+            'typeLabel' => $this->calculatorType->label(),
             'headlineFigure' => $this->headlineFigure,
             'createdAt' => $this->createdAt?->toISOString(),
             'wrapper' => $this->wrapper,
