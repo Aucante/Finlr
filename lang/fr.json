@@ -441,6 +441,9 @@
             }
         },
         "calculationFailed": "Le calcul n'a pas pu aboutir. Merci de réessayer dans quelques instants.",
+        "form": {
+            "nameRequired": "Le nom du scénario est obligatoire."
+        },
         "fire": {
             "eyebrow": "Indépendance financière",
             "title": "Simulateur FIRE",

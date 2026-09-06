@@ -16,7 +16,7 @@ type AnalogyFormProps = AnalogySimulatorPageProps;
 
 export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps) {
     const { t } = useTranslation();
-    const { data, setData, post, processing, errors } = useForm<AnalogyFormValues>({
+    const { data, setData, post, processing, errors, setError, clearErrors } = useForm<AnalogyFormValues>({
         ...defaults,
         name: '',
         accountTypeA: accountTypes[0],
@@ -31,6 +31,12 @@ export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps
 
     const submit = (e: SubmitEvent) => {
         e.preventDefault();
+
+        if (data.name.trim() === '') {
+            setError('name', t('simulator.form.nameRequired'));
+            return;
+        }
+
         post(route('simulators.analogy.run'));
     };
 
@@ -94,12 +100,14 @@ export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps
                             id="name"
                             name="name"
                             type="text"
-                            required
                             maxLength={255}
                             placeholder={t('simulator.analogy.form.namePlaceholder')}
                             value={data.name}
                             aria-invalid={Boolean(errors.name)}
-                            onChange={(e) => setData('name', e.target.value)}
+                            onChange={(e) => {
+                                setData('name', e.target.value);
+                                clearErrors('name');
+                            }}
                         />
                         {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                     </div>

@@ -56,7 +56,7 @@ interface SingleEnvelopeFormProps {
 
 export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: SingleEnvelopeFormProps) {
     const { t } = useTranslation();
-    const { data, setData, post, processing, errors } = useForm<SingleEnvelopeFormValues>({
+    const { data, setData, post, processing, errors, setError, clearErrors } = useForm<SingleEnvelopeFormValues>({
         ...defaults,
         name: '',
     });
@@ -69,6 +69,12 @@ export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: 
 
     const submit = (e: SubmitEvent) => {
         e.preventDefault();
+
+        if (data.name.trim() === '') {
+            setError('name', t('simulator.form.nameRequired'));
+            return;
+        }
+
         post(route('simulators.single-envelope.run', { jurisdiction, wrapper }));
     };
 
@@ -152,14 +158,16 @@ export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: 
                                         id="name"
                                         name="name"
                                         type="text"
-                                        required
                                         maxLength={255}
                                         placeholder={t('simulator.singleEnvelope.form.namePlaceholder', {
                                             wrapper: wrapperLabel,
                                         })}
                                         value={data.name}
                                         aria-invalid={Boolean(errors.name)}
-                                        onChange={(e) => setData('name', e.target.value)}
+                                        onChange={(e) => {
+                                            setData('name', e.target.value);
+                                            clearErrors('name');
+                                        }}
                                     />
                                     {errors.name && (
                                         <p className="text-xs text-destructive">{errors.name}</p>

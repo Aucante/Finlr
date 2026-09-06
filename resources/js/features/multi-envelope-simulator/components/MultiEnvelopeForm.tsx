@@ -40,7 +40,7 @@ type MultiEnvelopeFormProps = MultiEnvelopeSimulatorPageProps;
 
 export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvelopeFormProps) {
     const { t, i18n } = useTranslation();
-    const { data, setData, post, processing, errors } = useForm<MultiEnvelopeFormValues>({
+    const { data, setData, post, processing, errors, setError, clearErrors } = useForm<MultiEnvelopeFormValues>({
         name: '',
         inflationRate: defaults.inflationRate,
         envelopes: [
@@ -58,6 +58,12 @@ export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvel
 
     const submit = (e: SubmitEvent) => {
         e.preventDefault();
+
+        if (data.name.trim() === '') {
+            setError('name', t('simulator.form.nameRequired'));
+            return;
+        }
+
         post(route('simulators.multi-envelope.run'));
     };
 
@@ -109,12 +115,14 @@ export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvel
                                     id="name"
                                     name="name"
                                     type="text"
-                                    required
                                     maxLength={255}
                                     placeholder={t('simulator.multiEnvelope.form.namePlaceholder')}
                                     value={data.name}
                                     aria-invalid={Boolean(errors.name)}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) => {
+                                        setData('name', e.target.value);
+                                        clearErrors('name');
+                                    }}
                                 />
                                 {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                             </div>

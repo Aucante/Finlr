@@ -15,7 +15,7 @@ type FireFormProps = FireSimulatorPageProps;
 
 export default function FireForm({ defaults }: FireFormProps) {
     const { t } = useTranslation();
-    const { data, setData, post, processing, errors } = useForm<FireFormValues>({
+    const { data, setData, post, processing, errors, setError, clearErrors } = useForm<FireFormValues>({
         ...defaults,
         name: '',
     });
@@ -27,6 +27,12 @@ export default function FireForm({ defaults }: FireFormProps) {
 
     const submit = (e: SubmitEvent) => {
         e.preventDefault();
+
+        if (data.name.trim() === '') {
+            setError('name', t('simulator.form.nameRequired'));
+            return;
+        }
+
         post(route('simulators.fire.run'));
     };
 
@@ -90,12 +96,14 @@ export default function FireForm({ defaults }: FireFormProps) {
                             id="name"
                             name="name"
                             type="text"
-                            required
                             maxLength={255}
                             placeholder={t('simulator.fire.form.namePlaceholder')}
                             value={data.name}
                             aria-invalid={Boolean(errors.name)}
-                            onChange={(e) => setData('name', e.target.value)}
+                            onChange={(e) => {
+                                setData('name', e.target.value);
+                                clearErrors('name');
+                            }}
                         />
                         {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                     </div>

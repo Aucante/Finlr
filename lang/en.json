@@ -441,6 +441,9 @@
             }
         },
         "calculationFailed": "The calculation could not complete. Please try again shortly.",
+        "form": {
+            "nameRequired": "The scenario name is required."
+        },
         "fire": {
             "eyebrow": "Financial independence",
             "title": "FIRE simulator",
