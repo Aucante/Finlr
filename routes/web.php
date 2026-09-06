@@ -20,7 +20,7 @@ use App\Modules\User\Controllers\UpdateProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', ShowFreemiumCalculatorController::class)->name('calculator.freemium');
-
+function test(): int { return "erreur"; }
 Route::get('/dashboard', ShowDashboardController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
