@@ -401,6 +401,10 @@
             "form": {
                 "name": "Nome dello scenario",
                 "namePlaceholder": "PEA vs CTO — confronto a 20 anni",
+                "suggestName": {
+                    "button": "Suggerisci un nome",
+                    "template": "{{accountTypeA}} vs {{accountTypeB}}"
+                },
                 "sections": {
                     "shared": "Parametri condivisi",
                     "scenarios": "Scenari da confrontare"
@@ -451,6 +455,10 @@
             "form": {
                 "name": "Nome dello scenario",
                 "namePlaceholder": "Indipendenza finanziaria a 55 anni",
+                "suggestName": {
+                    "button": "Suggerisci un nome",
+                    "template": "FIRE a {{age}} {{yearsUnit}}"
+                },
                 "sections": {
                     "inputs": "I tuoi parametri"
                 },
@@ -526,6 +534,13 @@
             "form": {
                 "name": "Nome dello scenario",
                 "namePlaceholder": "Cascata PEA + CTO — piano a lungo termine",
+                "suggestName": {
+                    "button": "Suggerisci un nome",
+                    "withDuration_one": "Multi-involucro ({{count}} tasca, {{years}} {{yearsUnit}})",
+                    "withDuration_other": "Multi-involucro ({{count}} tasche, {{years}} {{yearsUnit}})",
+                    "withoutDuration_one": "Multi-involucro ({{count}} tasca)",
+                    "withoutDuration_other": "Multi-involucro ({{count}} tasche)"
+                },
                 "sections": {
                     "name": "Scenario",
                     "envelopes": "Involucri"
@@ -592,6 +607,10 @@
             "form": {
                 "name": "Nome dello scenario",
                 "namePlaceholder": "{{wrapper}} — piano a lungo termine",
+                "suggestName": {
+                    "button": "Suggerisci un nome",
+                    "template": "{{wrapper}} per {{years}} {{yearsUnit}}"
+                },
                 "sections": {
                     "capital": "Capitale & versamenti",
                     "performance": "Rendimento & costi",

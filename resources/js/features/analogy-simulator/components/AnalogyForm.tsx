@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import ScenarioColumn from '@/features/analogy-simulator/components/ScenarioColumn';
 import { SHARED_FIELD_CONFIG, SHARED_FIELD_ORDER, type SharedFieldKey } from '@/features/analogy-simulator/lib/sharedFields';
+import { suggestAnalogyName } from '@/features/analogy-simulator/lib/suggestName';
 import type { AccountType, AnalogyFormValues, AnalogySimulatorPageProps } from '@/features/analogy-simulator/types';
 
 type AnalogyFormProps = AnalogySimulatorPageProps;
@@ -38,6 +39,11 @@ export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps
         }
 
         post(route('simulators.analogy.run'));
+    };
+
+    const suggestName = () => {
+        setData('name', suggestAnalogyName(t, data.accountTypeA, data.accountTypeB));
+        clearErrors('name');
     };
 
     const renderSharedField = (fieldKey: SharedFieldKey) => {
@@ -95,7 +101,12 @@ export default function AnalogyForm({ defaults, accountTypes }: AnalogyFormProps
                 </CardHeader>
                 <CardContent className="flex flex-col gap-6">
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="name">{t('simulator.analogy.form.name')}</Label>
+                        <div className="flex items-center justify-between gap-2">
+                            <Label htmlFor="name">{t('simulator.analogy.form.name')}</Label>
+                            <Button type="button" variant="ghost" size="sm" onClick={suggestName}>
+                                {t('simulator.analogy.form.suggestName.button')}
+                            </Button>
+                        </div>
                         <Input
                             id="name"
                             name="name"

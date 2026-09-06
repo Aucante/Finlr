@@ -15,6 +15,7 @@ import {
     groupFieldsForLayout,
     type FormFieldKey,
 } from '@/features/single-envelope-simulator/lib/formFields';
+import { suggestSingleEnvelopeName } from '@/features/single-envelope-simulator/lib/suggestName';
 import type {
     Jurisdiction,
     SingleEnvelopeFormDefaults,
@@ -76,6 +77,11 @@ export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: 
         }
 
         post(route('simulators.single-envelope.run', { jurisdiction, wrapper }));
+    };
+
+    const suggestName = () => {
+        setData('name', suggestSingleEnvelopeName(t, wrapper, data.years));
+        clearErrors('name');
     };
 
     const renderField = (fieldKey: FormFieldKey) => {
@@ -151,9 +157,14 @@ export default function SingleEnvelopeForm({ defaults, jurisdiction, wrapper }: 
                         <CardContent className="flex flex-col gap-6">
                             {index === 0 && (
                                 <div className="flex flex-col gap-2">
-                                    <Label htmlFor="name">
-                                        {t('simulator.singleEnvelope.form.name')}
-                                    </Label>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <Label htmlFor="name">
+                                            {t('simulator.singleEnvelope.form.name')}
+                                        </Label>
+                                        <Button type="button" variant="ghost" size="sm" onClick={suggestName}>
+                                            {t('simulator.singleEnvelope.form.suggestName.button')}
+                                        </Button>
+                                    </div>
                                     <Input
                                         id="name"
                                         name="name"

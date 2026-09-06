@@ -401,6 +401,10 @@
             "form": {
                 "name": "Scenario name",
                 "namePlaceholder": "PEA vs CTO — 20-year comparison",
+                "suggestName": {
+                    "button": "Suggest a name",
+                    "template": "{{accountTypeA}} vs {{accountTypeB}}"
+                },
                 "sections": {
                     "shared": "Shared parameters",
                     "scenarios": "Scenarios to compare"
@@ -451,6 +455,10 @@
             "form": {
                 "name": "Scenario name",
                 "namePlaceholder": "Financial independence at 55",
+                "suggestName": {
+                    "button": "Suggest a name",
+                    "template": "FIRE at {{age}} {{yearsUnit}} old"
+                },
                 "sections": {
                     "inputs": "Your parameters"
                 },
@@ -526,6 +534,13 @@
             "form": {
                 "name": "Scenario name",
                 "namePlaceholder": "PEA + CTO cascade — long-term plan",
+                "suggestName": {
+                    "button": "Suggest a name",
+                    "withDuration_one": "Multi-envelope ({{count}} pocket, {{years}} {{yearsUnit}})",
+                    "withDuration_other": "Multi-envelope ({{count}} pockets, {{years}} {{yearsUnit}})",
+                    "withoutDuration_one": "Multi-envelope ({{count}} pocket)",
+                    "withoutDuration_other": "Multi-envelope ({{count}} pockets)"
+                },
                 "sections": {
                     "name": "Scenario",
                     "envelopes": "Envelopes"
@@ -592,6 +607,10 @@
             "form": {
                 "name": "Scenario name",
                 "namePlaceholder": "{{wrapper}} — long-term plan",
+                "suggestName": {
+                    "button": "Suggest a name",
+                    "template": "{{wrapper}} over {{years}} {{yearsUnit}}"
+                },
                 "sections": {
                     "capital": "Capital & contributions",
                     "performance": "Returns & fees",

@@ -115,4 +115,13 @@ describe('FireForm', () => {
 
         expect(screen.queryByText(i18n.t('simulator.form.nameRequired'))).not.toBeInTheDocument();
     });
+
+    it('fills the name field with a suggested name when clicking "Suggérer un nom"', async () => {
+        const user = userEvent.setup();
+        render(<FireForm defaults={defaults} />);
+
+        await user.click(screen.getByRole('button', { name: i18n.t('simulator.fire.form.suggestName.button') }));
+
+        expect(screen.getByLabelText(i18n.t('simulator.fire.form.name'))).toHaveValue('FIRE à 30 ans');
+    });
 });

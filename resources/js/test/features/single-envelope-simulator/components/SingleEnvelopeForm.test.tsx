@@ -146,4 +146,13 @@ describe('SingleEnvelopeForm', () => {
 
         expect(screen.queryByText(i18n.t('simulator.form.nameRequired'))).not.toBeInTheDocument();
     });
+
+    it('fills the name field with a suggested name when clicking "Suggérer un nom"', async () => {
+        const user = userEvent.setup();
+        render(<SingleEnvelopeForm defaults={defaults} jurisdiction="france" wrapper="pea" />);
+
+        await user.click(screen.getByRole('button', { name: i18n.t('simulator.singleEnvelope.form.suggestName.button') }));
+
+        expect(screen.getByLabelText(i18n.t('simulator.singleEnvelope.form.name'))).toHaveValue('PEA sur 15 ans');
+    });
 });

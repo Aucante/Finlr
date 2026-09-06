@@ -401,6 +401,10 @@
             "form": {
                 "name": "Nom du scénario",
                 "namePlaceholder": "PEA vs CTO — comparaison 20 ans",
+                "suggestName": {
+                    "button": "Suggérer un nom",
+                    "template": "{{accountTypeA}} vs {{accountTypeB}}"
+                },
                 "sections": {
                     "shared": "Paramètres partagés",
                     "scenarios": "Scénarios à comparer"
@@ -451,6 +455,10 @@
             "form": {
                 "name": "Nom du scénario",
                 "namePlaceholder": "Indépendance à 55 ans",
+                "suggestName": {
+                    "button": "Suggérer un nom",
+                    "template": "FIRE à {{age}} {{yearsUnit}}"
+                },
                 "sections": {
                     "inputs": "Vos paramètres"
                 },
@@ -526,6 +534,13 @@
             "form": {
                 "name": "Nom du scénario",
                 "namePlaceholder": "Cascade PEA + CTO — plan long terme",
+                "suggestName": {
+                    "button": "Suggérer un nom",
+                    "withDuration_one": "Multi-enveloppe ({{count}} poche, {{years}} {{yearsUnit}})",
+                    "withDuration_other": "Multi-enveloppe ({{count}} poches, {{years}} {{yearsUnit}})",
+                    "withoutDuration_one": "Multi-enveloppe ({{count}} poche)",
+                    "withoutDuration_other": "Multi-enveloppe ({{count}} poches)"
+                },
                 "sections": {
                     "name": "Scénario",
                     "envelopes": "Enveloppes"
@@ -592,6 +607,10 @@
             "form": {
                 "name": "Nom du scénario",
                 "namePlaceholder": "{{wrapper}} — plan long terme",
+                "suggestName": {
+                    "button": "Suggérer un nom",
+                    "template": "{{wrapper}} sur {{years}} {{yearsUnit}}"
+                },
                 "sections": {
                     "capital": "Capital & versements",
                     "performance": "Rendement & frais",

@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import EnvelopeRow from '@/features/multi-envelope-simulator/components/EnvelopeRow';
+import { suggestMultiEnvelopeName } from '@/features/multi-envelope-simulator/lib/suggestName';
 import type {
     AccountType,
     EnvelopeFormValues,
@@ -67,6 +68,11 @@ export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvel
         post(route('simulators.multi-envelope.run'));
     };
 
+    const suggestName = () => {
+        setData('name', suggestMultiEnvelopeName(t, data.envelopes));
+        clearErrors('name');
+    };
+
     const updateEnvelope = <K extends keyof EnvelopeFormValues>(index: number, field: K, value: EnvelopeFormValues[K]) => {
         setData(
             'envelopes',
@@ -110,7 +116,12 @@ export default function MultiEnvelopeForm({ defaults, accountTypes }: MultiEnvel
                     <CardContent className="flex flex-col gap-6">
                         <div className="grid gap-4 sm:grid-cols-2">
                             <div className="flex flex-col gap-2">
-                                <Label htmlFor="name">{t('simulator.multiEnvelope.form.name')}</Label>
+                                <div className="flex items-center justify-between gap-2">
+                                    <Label htmlFor="name">{t('simulator.multiEnvelope.form.name')}</Label>
+                                    <Button type="button" variant="ghost" size="sm" onClick={suggestName}>
+                                        {t('simulator.multiEnvelope.form.suggestName.button')}
+                                    </Button>
+                                </div>
                                 <Input
                                     id="name"
                                     name="name"

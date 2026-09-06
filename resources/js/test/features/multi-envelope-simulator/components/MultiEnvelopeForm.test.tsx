@@ -137,4 +137,13 @@ describe('MultiEnvelopeForm', () => {
 
         expect(screen.queryByText(i18n.t('simulator.form.nameRequired'))).not.toBeInTheDocument();
     });
+
+    it('fills the name field with a suggested name when clicking "Suggérer un nom"', async () => {
+        const user = userEvent.setup();
+        render(<MultiEnvelopeForm defaults={defaults} accountTypes={accountTypes} />);
+
+        await user.click(screen.getByRole('button', { name: i18n.t('simulator.multiEnvelope.form.suggestName.button') }));
+
+        expect(screen.getByLabelText(i18n.t('simulator.multiEnvelope.form.name'))).toHaveValue('Multi-enveloppe (2 poches, 15 ans)');
+    });
 });
