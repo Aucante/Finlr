@@ -28,8 +28,10 @@ if [ -n "$STAGED_PHP" ]; then
 
     echo "⚙️ Analyse PHPStan..."
     if [ -f "./vendor/bin/sail" ] && docker ps | grep -q "sail"; then
+        ./vendor/bin/sail php ./vendor/bin/phpstan clear-result-cache > /dev/null 2>&1
         ./vendor/bin/sail php ./vendor/bin/phpstan analyse $STAGED_PHP --level=8 --no-progress
     else
+        ./vendor/bin/phpstan clear-result-cache > /dev/null 2>&1
         ./vendor/bin/phpstan analyse $STAGED_PHP --level=8 --no-progress
     fi
 
@@ -50,7 +52,7 @@ PROMPT="Tu es un Reviewer Code Senior (PHP 8.3 & React/TS). Analyse ce git diff 
 3/ Architecture : Monolithe modulaire backend (Actions, DTOs readonly, invokables) et Feature-based frontend (pas de 'any', types Miroir DTO).
 4/ Typage Strict : Pas d'array générique ou de 'any'.
 
-Si tu trouves un problème, reponds strictement 'REJETE:' suivi du detail exact. Sinon reponds 'VALIDE'."
+Si tu trouves un problème, reponds strictly 'REJETE:' suivi du detail exact. Sinon reponds 'VALIDE'."
 
 REVIEW_RESULT=$(claude -p "$PROMPT" "$DIFF_DATA")
 
