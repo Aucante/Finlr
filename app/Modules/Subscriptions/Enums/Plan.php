@@ -14,6 +14,14 @@ enum Plan: string
         return $this !== self::FREE;
     }
 
+    public function grants(Permission $permission): bool
+    {
+        return match ($this) {
+            self::FREE => $permission === Permission::CREATE_PROJECT,
+            self::PRO_MONTHLY, self::PRO_YEARLY, self::ENTERPRISE => true,
+        };
+    }
+
     public function maxProjectsAllowed(): int
     {
         return match ($this) {
