@@ -79,6 +79,10 @@
         "yearTick_other": "{{count}} anni",
         "tooltipYear": "Anno {{year}}"
     },
+    "disclaimer": {
+        "text": "Stima rapida, esclusa la fiscalità reale e le spese dettagliate — per un risultato fiscalmente preciso,",
+        "cta": "usa un simulatore preciso"
+    },
     "footer": {
         "copyright": "© {{year}} Finlr. Tutti i diritti riservati."
     },

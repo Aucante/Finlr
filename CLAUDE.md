@@ -168,6 +168,64 @@ INTERDICTION ABSOLUE DE COMMITER : n'exécute JAMAIS `git commit`, `git add`, `g
 
 ---
 
+## Journal de Décisions Produit
+
+> Décisions d'architecture ou de produit qui dérogent délibérément à une
+> règle générale de ce fichier, avec leur justification — pour qu'une
+> future session (humaine ou IA) ne "corrige" pas un choix assumé en
+> pensant réparer un oubli. Ajouter une entrée datée en bas de la liste
+> plutôt que de réécrire les entrées existantes.
+
+- **2026-09 — Le calculateur freemium (`/resources/js/features/
+  freemium-calculator/`) reste 100% client, jamais branché sur
+  `saucante74/finlr-engine` :**
+    - Ce n'est **pas** une exception oubliée à la règle cardinale « tous les
+      calculs financiers vivent exclusivement dans `saucante74/finlr-engine` »
+      (voir « Architecture & Normes de Code » ci-dessus) — c'est une décision
+      produit délibérée. La valeur de cette page pour l'acquisition de trafic
+      est le retour instantané pendant que l'utilisateur tape (`useMemo` +
+      `computeCompound()` en synchrone) ; un appel serveur à chaque frappe
+      casserait cette expérience, et un debounce introduirait la latence que
+      la page existe justement pour éviter.
+    - La formule de croissance composée est isolée dans la fonction pure
+      `computeCompound()` (`resources/js/features/freemium-calculator/lib/
+      compound.ts`), testée unitairement (`compound.test.ts`, valeurs de
+      référence dérivées de la formule de rente à forme close). Son docblock
+      documente explicitement ce qui est simplifié (fiscalité réelle réduite
+      à un taux plat, 5 typologies de frais du moteur premium réduites à
+      deux pourcentages) et la date de dernière vérification de cohérence
+      avec les taux courants.
+    - **Garde-fou de dérive :** si les taux fiscaux (PEA/CTO/AV) ou
+      l'algorithme de croissance du moteur premium `saucante74/finlr-engine`
+      changent significativement, vérifier manuellement si ce calculateur
+      freemium reste une approximation raisonnable — rien ne le fait
+      automatiquement, ni test, ni CI, puisqu'il n'existe aucun lien
+      technique entre les deux. Le point de départ de cette vérification est
+      le docblock de `computeCompound()` et le commentaire en tête de
+      `constants.ts`.
+    - Le risque de confusion utilisateur (prendre ce chiffre pour un
+      résultat fiscalement exact) est traité côté transparence, pas côté
+      précision : un bandeau visible en permanence (`FreemiumDisclaimer.tsx`,
+      affiché sur la page, pas seulement une info-bulle survolée) rappelle
+      qu'il s'agit d'une estimation et renvoie vers `/simulators` pour un
+      résultat précis.
+
+- **2026-09 — Le garde-fou de dérive ci-dessus vient de jouer son rôle une
+  première fois :** `computeCompound()` dérivait son taux mensuel par
+  simple division (`annualRate / 100 / 12`), alors que
+  `saucante74/finlr-engine` utilise depuis sa v2.0.0 un taux mensuel
+  réellement composé (`(1 + annualRate/100)^(1/12) - 1`, voir son
+  `CHANGELOG.md`). Corrigé — voir `monthlyRateFromAnnualPercent()` dans
+  `compound.ts`. Point notable pour une future vérification manuelle :
+  passer à la formule composée **réduit** légèrement les montants projetés
+  (le taux mensuel composé est toujours ≤ `annualRate/12`, par l'inégalité
+  de Bernoulli) — l'intuition inverse (« composé ≥ simple, donc ça doit
+  monter ») ne s'applique pas ici, puisque les deux méthodes composaient
+  déjà mensuellement ; seule la dérivation du taux mensuel à partir du taux
+  annuel affiché change.
+
+---
+
 ## Qualité de Code & CI
 
 - **Formatage (Laravel Pint) :** `composer format` (alias de `vendor/bin/pint`).
