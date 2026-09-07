@@ -210,6 +210,20 @@ INTERDICTION ABSOLUE DE COMMITER : n'exécute JAMAIS `git commit`, `git add`, `g
       qu'il s'agit d'une estimation et renvoie vers `/simulators` pour un
       résultat précis.
 
+- **2026-09 — Le garde-fou de dérive ci-dessus vient de jouer son rôle une
+  première fois :** `computeCompound()` dérivait son taux mensuel par
+  simple division (`annualRate / 100 / 12`), alors que
+  `saucante74/finlr-engine` utilise depuis sa v2.0.0 un taux mensuel
+  réellement composé (`(1 + annualRate/100)^(1/12) - 1`, voir son
+  `CHANGELOG.md`). Corrigé — voir `monthlyRateFromAnnualPercent()` dans
+  `compound.ts`. Point notable pour une future vérification manuelle :
+  passer à la formule composée **réduit** légèrement les montants projetés
+  (le taux mensuel composé est toujours ≤ `annualRate/12`, par l'inégalité
+  de Bernoulli) — l'intuition inverse (« composé ≥ simple, donc ça doit
+  monter ») ne s'applique pas ici, puisque les deux méthodes composaient
+  déjà mensuellement ; seule la dérivation du taux mensuel à partir du taux
+  annuel affiché change.
+
 ---
 
 ## Qualité de Code & CI

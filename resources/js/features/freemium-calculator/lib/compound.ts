@@ -4,6 +4,17 @@ import type {
     CompoundResult,
 } from '@/features/freemium-calculator/types';
 
+/**
+ * Derives a monthly rate from an annual one the same way
+ * `saucante74/finlr-engine` has since v2.0.0: `(1 + annual)^(1/12) - 1`
+ * (true monthly compounding), not `annual / 12` (simple mensualization).
+ * The two diverge measurably — this collapses to the same value only at
+ * annual = 0.
+ */
+function monthlyRateFromAnnualPercent(annualRatePercent: number): number {
+    return (1 + annualRatePercent / 100) ** (1 / 12) - 1;
+}
+
 function buildPoint(
     year: number,
     contributions: number,
@@ -58,8 +69,11 @@ function buildPoint(
  * (c) Last verified consistent with current rates: 2026-09-07 (PEA/CTO
  *     rates in `constants.ts` cross-checked against
  *     `tests/Unit/SimulationEngine/FinlrEngineAdapterTest.php`, still
- *     matching: PEA preferential 18.6%, PEA standard/CTO 31.4%). Update
- *     this date whenever that comparison is redone.
+ *     matching: PEA preferential 18.6%, PEA standard/CTO 31.4%; monthly-rate
+ *     derivation cross-checked against `saucante74/finlr-engine`'s
+ *     CHANGELOG.md and aligned to its v2.0.0 compounding convention — see
+ *     `monthlyRateFromAnnualPercent()` above). Update this date whenever
+ *     that comparison is redone.
  */
 export function computeCompound(inputs: CompoundInputs): CompoundResult {
     const {
@@ -77,9 +91,9 @@ export function computeCompound(inputs: CompoundInputs): CompoundResult {
     const safeYears = Math.max(0, Math.round(years) || 0);
     const months = safeYears * 12;
 
-    const grossMonthlyRate = annualRate / 100 / 12;
+    const grossMonthlyRate = monthlyRateFromAnnualPercent(annualRate);
     const netAnnualRate = annualRate - wrapperFee - fundFee;
-    const netMonthlyRate = netAnnualRate / 100 / 12;
+    const netMonthlyRate = monthlyRateFromAnnualPercent(netAnnualRate);
 
     let grossCapital = initialCapital;
     let netCapital = initialCapital;
