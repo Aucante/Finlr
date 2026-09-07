@@ -15,7 +15,6 @@
         "laravel/socialite": "^5.30",
         "laravel/tinker": "^3.0",
         "saucante74/finlr-engine": "^2.0",
-        "socialiteproviders/microsoft": "^4.10",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {

@@ -85,8 +85,7 @@
     "auth": {
         "oauth": {
             "or": "OU",
-            "google": "Google",
-            "microsoft": "Microsoft"
+            "google": "Google"
         },
         "login": {
             "eyebrow": "Espace membre",

@@ -85,8 +85,7 @@
     "auth": {
         "oauth": {
             "or": "OPPURE",
-            "google": "Google",
-            "microsoft": "Microsoft"
+            "google": "Google"
         },
         "login": {
             "eyebrow": "Area riservata",

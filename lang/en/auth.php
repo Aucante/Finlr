@@ -17,5 +17,6 @@ return [
     'password' => 'The provided password is incorrect.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
     'oauth_failed' => 'We could not sign you in with that provider. Please try again.',
+    'oauth_account_exists' => 'An account already exists for this email address. Please sign in to that account first, then try connecting this provider again.',
 
 ];

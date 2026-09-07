@@ -174,6 +174,28 @@ INTERDICTION ABSOLUE DE COMMITER : n'exécute JAMAIS `git commit`, `git add`, `g
 - **Analyse statique (Larastan/PHPStan, niveau 5) :** `composer analyse`.
   Aucun fichier de `app/` ne doit être ajouté à `excludePaths` : une exclusion
   masque les erreurs au lieu de les corriger.
+- **Le hook pre-commit réel n'est PAS `.git/hooks/pre-commit` :**
+  `core.hooksPath` pointe vers `.githooks/` (dossier versionné) — c'est
+  `.githooks/pre-commit` qui s'exécute réellement à chaque commit. Un fichier
+  `.git/hooks/pre-commit` peut exister localement sans jamais s'exécuter ;
+  vérifie toujours `git config --get core.hooksPath` avant de faire confiance
+  à un hook trouvé sous `.git/hooks/`.
+- **`.githooks/pre-commit` doit rester strictement identique à `composer
+  analyse` :** il exécute PHPStan sur les fichiers PHP stagés (via Sail,
+  cache vidé au préalable) **sans flag `--level`**, pour hériter du niveau
+  défini dans `phpstan.neon` (actuellement 5) — exactement comme `composer
+  analyse`. Un incident précédent (2026-09) a montré qu'un `--level=8`
+  auparavant codé en dur dans ce hook faisait diverger silencieusement les
+  deux commandes : `composer analyse` annonçait 0 erreur pendant que le hook
+  en bloquait plusieurs (accès nullable, types de tableaux génériques
+  manquants — tout ce que les niveaux 6 à 8 ajoutent). Si `phpstan.neon`
+  doit un jour monter de niveau, cela doit rester la **seule** source de
+  vérité — ne jamais réintroduire un `--level` propre au hook. **Avant de
+  déclarer "PHPStan au vert" dans un rapport de tâche, exécute aussi
+  `.githooks/pre-commit` sur les fichiers modifiés (pas seulement
+  `composer analyse`)** : le hook cible spécifiquement les fichiers stagés
+  via Sail (PHP 8.3, conforme au projet), ce qui peut différer d'une
+  exécution `composer analyse` lancée hors Sail.
 - **Typecheck frontend :** `./vendor/bin/sail npm run typecheck`.
 - **Tests :** `./vendor/bin/sail test` (PHPUnit) et
   `./vendor/bin/sail npm run test` (Vitest).
