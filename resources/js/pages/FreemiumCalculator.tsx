@@ -12,6 +12,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import CalculatorForm from '@/features/freemium-calculator/components/CalculatorForm';
+import FreemiumDisclaimer from '@/features/freemium-calculator/components/FreemiumDisclaimer';
 import GrowthChart from '@/features/freemium-calculator/components/GrowthChart';
 import KpiCards from '@/features/freemium-calculator/components/KpiCards';
 import { FORM_DEFAULTS, TAX_SUGGESTIONS } from '@/features/freemium-calculator/constants';
@@ -52,6 +53,8 @@ export default function FreemiumCalculator({
                         {t('hero.description')}
                     </p>
                 </header>
+
+                <FreemiumDisclaimer />
 
                 <div className="grid gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:items-stretch">
                     <CalculatorForm

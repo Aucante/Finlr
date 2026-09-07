@@ -30,6 +30,37 @@ function buildPoint(
     };
 }
 
+/**
+ * Projects compound growth for the free, client-side calculator. This is a
+ * deliberately simplified approximation, not a call into the real financial
+ * engine — the calculator's whole value is instant, in-browser feedback as
+ * the user types, which a server round-trip to `saucante74/finlr-engine`
+ * would break. Two things follow from that:
+ *
+ * (a) What is simplified away, on purpose: real French capital-gains
+ *     taxation is bracket- and wrapper-specific (see the PEA/CTO rules
+ *     documented in `constants.ts` and `tests/Unit/SimulationEngine/
+ *     FinlrEngineAdapterTest.php`); here it collapses to one flat
+ *     `taxRate` applied to the whole net gain. Likewise, the premium
+ *     engine's finer-grained fee model (brokerage, management, custody,
+ *     arbitrage — each with its own rate, some with a fixed component too)
+ *     collapses here to two flat annual percentages, `wrapperFee` and
+ *     `fundFee`, subtracted straight from the gross rate.
+ *
+ * (b) This function is NOT wired to `saucante74/finlr-engine` and never
+ *     will be — by design, not by oversight (see CLAUDE.md, "Journal de
+ *     Décisions Produit"). Nothing keeps it in sync automatically: if the
+ *     premium engine's rates or growth algorithm change, this one does not
+ *     follow. Whether it's still a reasonable approximation after such a
+ *     change is a judgment call for a human (or a future session) to make
+ *     deliberately, not something either engine enforces.
+ *
+ * (c) Last verified consistent with current rates: 2026-09-07 (PEA/CTO
+ *     rates in `constants.ts` cross-checked against
+ *     `tests/Unit/SimulationEngine/FinlrEngineAdapterTest.php`, still
+ *     matching: PEA preferential 18.6%, PEA standard/CTO 31.4%). Update
+ *     this date whenever that comparison is redone.
+ */
 export function computeCompound(inputs: CompoundInputs): CompoundResult {
     const {
         initialCapital,

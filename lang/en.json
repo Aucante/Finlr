@@ -79,6 +79,10 @@
         "yearTick_other": "{{count}} yrs",
         "tooltipYear": "Year {{year}}"
     },
+    "disclaimer": {
+        "text": "Quick estimate, excluding real taxation and detailed fees — for a tax-accurate result,",
+        "cta": "use a precise simulator"
+    },
     "footer": {
         "copyright": "© {{year}} Finlr. All rights reserved."
     },
