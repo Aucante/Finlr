@@ -11,7 +11,14 @@ class VerifyUserEmailController extends Controller
 {
     public function __invoke(EmailVerificationRequest $request, VerifyEmailAction $action): RedirectResponse
     {
-        $action->handle($request->user());
+        $user = $request->user();
+
+        // The route sits behind the `auth` middleware, so $user is never
+        // null in practice; PHPStan still needs this explicit proof to
+        // allow passing a non-nullable User to VerifyEmailAction::handle().
+        abort_if($user === null, 403);
+
+        $action->handle($user);
 
         return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
     }

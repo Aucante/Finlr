@@ -19,6 +19,12 @@ class PasswordConfirmationTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_a_guest_is_redirected_to_login(): void
+    {
+        $this->get('/confirm-password')->assertRedirect(route('login'));
+        $this->post('/confirm-password', ['password' => 'password'])->assertRedirect(route('login'));
+    }
+
     public function test_password_can_be_confirmed(): void
     {
         $user = User::factory()->create();

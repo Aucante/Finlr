@@ -25,6 +25,14 @@ class RunAnalogyComparisonTest extends TestCase
         }
     }
 
+    public function test_a_guest_is_redirected_to_login(): void
+    {
+        $response = $this->post('/simulators/analogy', $this->validPayload());
+
+        $response->assertRedirect(route('login'));
+        $this->assertDatabaseCount('scenarios', 0);
+    }
+
     public function test_a_free_plan_user_receives_a_403(): void
     {
         $user = User::factory()->create(['subscription_plan' => Plan::FREE]);

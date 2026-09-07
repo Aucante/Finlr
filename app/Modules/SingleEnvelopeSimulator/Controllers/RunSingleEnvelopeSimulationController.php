@@ -21,9 +21,16 @@ class RunSingleEnvelopeSimulationController extends Controller
     ): RedirectResponse {
         abort_unless($jurisdiction->supports($wrapper), 404);
 
+        $user = $request->user();
+
+        // The route sits behind the `auth` middleware, so $user is never
+        // null in practice; PHPStan still needs this explicit proof to
+        // allow passing a non-nullable User to SaveSingleEnvelopeScenarioAction::handle().
+        abort_if($user === null, 403);
+
         $input = $request->toData($wrapper);
         $result = $run->handle($input);
-        $scenario = $save->handle($request->user(), $input, $result, $request->name());
+        $scenario = $save->handle($user, $input, $result, $request->name());
 
         return redirect()->route('scenarios.show', $scenario);
     }
