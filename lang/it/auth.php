@@ -14,5 +14,6 @@
 return [
 
     'oauth_failed' => 'Accesso con questo provider non riuscito. Riprova.',
+    'oauth_account_exists' => 'Esiste già un account con questo indirizzo email. Accedi prima a quell\'account, poi riprova a collegare questo provider.',
 
 ];

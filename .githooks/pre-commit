@@ -27,12 +27,19 @@ if [ -n "$STAGED_PHP" ]; then
     done
 
     echo "⚙️ Analyse PHPStan..."
+    # Pas de --level ici : on hérite du niveau défini dans phpstan.neon
+    # (actuellement 5), pour rester identique à `composer analyse`. Un flag
+    # --level en CLI l'emporterait sur parameters.level du neon et
+    # réintroduirait la divergence entre ce hook et `composer analyse` — un
+    # binaire PHPStan différent (host vs conteneur Sail) ou un futur bump du
+    # niveau dans phpstan.neon suffisent déjà à faire diverger les deux
+    # commandes sans qu'un flag matérialise l'écart.
     if [ -f "./vendor/bin/sail" ] && docker ps | grep -q "sail"; then
         ./vendor/bin/sail php ./vendor/bin/phpstan clear-result-cache > /dev/null 2>&1
-        ./vendor/bin/sail php ./vendor/bin/phpstan analyse $STAGED_PHP --level=8 --no-progress
+        ./vendor/bin/sail php ./vendor/bin/phpstan analyse $STAGED_PHP --no-progress
     else
         ./vendor/bin/phpstan clear-result-cache > /dev/null 2>&1
-        ./vendor/bin/phpstan analyse $STAGED_PHP --level=8 --no-progress
+        ./vendor/bin/phpstan analyse $STAGED_PHP --no-progress
     fi
 
     if [ $? -ne 0 ]; then

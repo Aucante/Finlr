@@ -41,14 +41,4 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
-    'microsoft' => [
-        'client_id' => env('MICROSOFT_CLIENT_ID'),
-        'client_secret' => env('MICROSOFT_CLIENT_SECRET'),
-        'redirect' => env('MICROSOFT_REDIRECT_URI'),
-        // Multi-tenant by default: any work, school, or personal Microsoft
-        // account can sign in. Set to a specific Azure AD tenant ID to
-        // restrict sign-in to a single organization.
-        'tenant' => env('MICROSOFT_TENANT', 'common'),
-    ],
-
 ];
