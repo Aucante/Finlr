@@ -13,7 +13,14 @@ class UpdateProfileController extends Controller
 {
     public function __invoke(ProfileUpdateRequest $request, UpdateProfileAction $action): RedirectResponse
     {
-        $action->handle($request->user(), ProfileUpdateData::fromRequest($request));
+        $user = $request->user();
+
+        // The route sits behind the `auth` middleware, so $user is never
+        // null in practice; PHPStan still needs this explicit proof to
+        // allow passing a non-nullable User to UpdateProfileAction::handle().
+        abort_if($user === null, 403);
+
+        $action->handle($user, ProfileUpdateData::fromRequest($request));
 
         return Redirect::route('settings.edit');
     }

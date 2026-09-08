@@ -7,15 +7,28 @@ import type { CompoundInputs } from '@/features/freemium-calculator/types';
  * Every expected value in this file is derived from the closed-form ordinary
  * annuity formula, never from running computeCompound():
  *
- *     FV = P(1 + i)^n + PMT * ((1 + i)^n - 1) / i        with i = rate/100/12, n = years*12
+ *     FV = P(1 + i)^n + PMT * ((1 + i)^n - 1) / i
+ *     with i = (1 + rate/100)^(1/12) - 1, n = years*12
+ *
+ * `i` is a true monthly-compounding rate (matches `saucante74/finlr-engine`
+ * since its v2.0.0 — see `monthlyRateFromAnnualPercent()` in compound.ts),
+ * not the naive `rate/100/12`. One consequence worth remembering when
+ * re-deriving any of these by hand: because `(1+i)^12 = 1 + rate/100`
+ * exactly by construction, a lump sum with no contribution lands on exactly
+ * `P * (1 + rate/100)^years` at every year boundary — no float noise, no
+ * approximation — which is why a few figures below (e.g. 11910.16) are
+ * clean decimals instead of the usual long tail.
  *
  * "Ordinary" (payment at the end of each period) is the right form here because
  * the implementation credits interest first and adds the monthly contribution
  * after, so a month's payment earns nothing during that month.
  *
- * The reference numbers below were computed with 40-digit decimal arithmetic and
- * are quoted to 10 decimals; the derivation is written above each one so it can
- * be re-checked by hand.
+ * The reference numbers below were computed with 50-digit decimal arithmetic
+ * (Python's `decimal` module) and are quoted to 10 decimals; the derivation
+ * is written above each one so it can be re-checked by hand. Each one was
+ * also cross-checked against a direct Python simulation of the same
+ * month-by-month loop as compound.ts, to rule out a closed-form transcription
+ * error — both agreed to within 1e-11 on values around 4.5e4.
  *
  * Tolerance: comparisons use toBeCloseTo(expected, PRECISION_DIGITS), i.e. an
  * absolute tolerance of 5e-7. Rationale: the implementation iterates up to 120
@@ -45,32 +58,33 @@ function makeInputs(overrides: Partial<CompoundInputs> = {}): CompoundInputs {
 describe('computeCompound', () => {
     describe('capital growth', () => {
         it('grows an initial capital alone, with no monthly contribution', () => {
-            // P = 10000, PMT = 0, r = 6%, y = 3  ->  i = 0.005, n = 36
-            // FV = 10000 * 1.005^36 = 11966.8052482342
+            // P = 10000, PMT = 0, r = 6%, y = 3  ->  i = 1.06^(1/12) - 1, n = 36
+            // (1+i)^36 = 1.06^3 exactly (see file docblock), so:
+            // FV = 10000 * 1.06^3 = 11910.16
             const result = computeCompound(
                 makeInputs({ initialCapital: 10000, annualRate: 6, years: 3 }),
             );
 
-            expect(result.finalGross).toBeCloseTo(11966.8052482342, PRECISION_DIGITS);
+            expect(result.finalGross).toBeCloseTo(11910.16, PRECISION_DIGITS);
             expect(result.invested).toBe(10000);
-            expect(result.grossGains).toBeCloseTo(1966.8052482342, PRECISION_DIGITS);
+            expect(result.grossGains).toBeCloseTo(1910.16, PRECISION_DIGITS);
         });
 
         it('grows monthly contributions alone, with no initial capital', () => {
-            // P = 0, PMT = 100, r = 12%, y = 1  ->  i = 0.01, n = 12
-            // FV = 100 * (1.01^12 - 1) / 0.01 = 1268.2503013197
+            // P = 0, PMT = 100, r = 12%, y = 1  ->  i = 1.12^(1/12) - 1, n = 12
+            // FV = 100 * ((1+i)^12 - 1) / i = 100 * (1.12 - 1) / i = 1264.6497908353
             const result = computeCompound(
                 makeInputs({ monthlyContribution: 100, annualRate: 12, years: 1 }),
             );
 
-            expect(result.finalGross).toBeCloseTo(1268.2503013197, PRECISION_DIGITS);
+            expect(result.finalGross).toBeCloseTo(1264.6497908353, PRECISION_DIGITS);
             expect(result.invested).toBe(1200);
-            expect(result.grossGains).toBeCloseTo(68.2503013197, PRECISION_DIGITS);
+            expect(result.grossGains).toBeCloseTo(64.6497908353, PRECISION_DIGITS);
         });
 
         it('combines an initial capital and monthly contributions', () => {
-            // P = 5000, PMT = 200, r = 7%, y = 10  ->  i = 7/1200, n = 120
-            // FV = 5000 * (1+i)^120 + 200 * ((1+i)^120 - 1) / i = 44665.2683701854
+            // P = 5000, PMT = 200, r = 7%, y = 10  ->  i = 1.07^(1/12) - 1, n = 120
+            // FV = 5000 * (1+i)^120 + 200 * ((1+i)^120 - 1) / i = 44046.1030376749
             // invested = 5000 + 200 * 120 = 29000
             const result = computeCompound(
                 makeInputs({
@@ -81,9 +95,9 @@ describe('computeCompound', () => {
                 }),
             );
 
-            expect(result.finalGross).toBeCloseTo(44665.2683701854, PRECISION_DIGITS);
+            expect(result.finalGross).toBeCloseTo(44046.1030376749, PRECISION_DIGITS);
             expect(result.invested).toBe(29000);
-            expect(result.grossGains).toBeCloseTo(15665.2683701854, PRECISION_DIGITS);
+            expect(result.grossGains).toBeCloseTo(15046.1030376749, PRECISION_DIGITS);
         });
     });
 
@@ -129,8 +143,8 @@ describe('computeCompound', () => {
     describe('fees', () => {
         it('lowers the net result without touching the gross one', () => {
             // Gross uses r = 6%. Net uses r - wrapperFee - fundFee = 6 - 0.5 - 0.3 = 5.2%.
-            // gross = 10000 * 1.005^36                  = 11966.8052482342
-            // net   = 10000 * (1 + 5.2/1200)^36         = 11684.3234380496
+            // gross = 10000 * 1.06^3                      = 11910.16
+            // net   = 10000 * (1.052)^(1/12 * 36 = 3)     = 11642.526080 (see file docblock)
             // With taxRate = 0 the net capital passes through untaxed.
             const withFees = computeCompound(
                 makeInputs({
@@ -145,21 +159,21 @@ describe('computeCompound', () => {
                 makeInputs({ initialCapital: 10000, annualRate: 6, years: 3 }),
             );
 
-            expect(withFees.finalGross).toBeCloseTo(11966.8052482342, PRECISION_DIGITS);
+            expect(withFees.finalGross).toBeCloseTo(11910.16, PRECISION_DIGITS);
             expect(withFees.finalGross).toBeCloseTo(withoutFees.finalGross, PRECISION_DIGITS);
 
-            expect(withFees.finalNetReal).toBeCloseTo(11684.3234380496, PRECISION_DIGITS);
-            expect(withoutFees.finalNetReal).toBeCloseTo(11966.8052482342, PRECISION_DIGITS);
+            expect(withFees.finalNetReal).toBeCloseTo(11642.5260800000, PRECISION_DIGITS);
+            expect(withoutFees.finalNetReal).toBeCloseTo(11910.16, PRECISION_DIGITS);
             expect(withFees.finalNetReal).toBeLessThan(withoutFees.finalNetReal);
         });
     });
 
     describe('tax', () => {
         it('applies the tax rate to a positive capital gain', () => {
-            // No fee, so net capital = gross capital = 11966.8052482342.
-            // gain = 1966.8052482342
-            // netReal = 10000 + gain * (1 - 30/100) = 10000 + 1376.7636737639
-            //         = 11376.7636737639
+            // No fee, so net capital = gross capital = 11910.16 (see docblock).
+            // gain = 1910.16
+            // netReal = 10000 + gain * (1 - 30/100) = 10000 + 1337.112
+            //         = 11337.112
             const result = computeCompound(
                 makeInputs({
                     initialCapital: 10000,
@@ -169,16 +183,17 @@ describe('computeCompound', () => {
                 }),
             );
 
-            expect(result.grossGains).toBeCloseTo(1966.8052482342, PRECISION_DIGITS);
-            expect(result.finalNetReal).toBeCloseTo(11376.7636737639, PRECISION_DIGITS);
-            expect(result.netRealGains).toBeCloseTo(1376.7636737639, PRECISION_DIGITS);
+            expect(result.grossGains).toBeCloseTo(1910.16, PRECISION_DIGITS);
+            expect(result.finalNetReal).toBeCloseTo(11337.112, PRECISION_DIGITS);
+            expect(result.netRealGains).toBeCloseTo(1337.112, PRECISION_DIGITS);
         });
 
         it('leaves a negative capital gain untaxed', () => {
             // r = 0 and wrapperFee = 6 give a net rate of -6%/year, so the net
-            // capital falls below the contributions:
-            //   net = 10000 * (1 - 6/1200)^36 = 10000 * 0.995^36 = 8348.9316731873
-            // The loss is -1651.0683268127. A 30% tax on it would ADD 495.32 back;
+            // capital falls below the contributions. At year boundaries this
+            // collapses to P * (1 - 6/100)^years exactly (see docblock):
+            //   net = 10000 * 0.94^3 = 8305.84
+            // The loss is -1694.16. A 30% tax on it would ADD 508.25 back;
             // the expected behaviour is that no tax applies at all, so
             // netReal = net capital exactly.
             const result = computeCompound(
@@ -191,8 +206,8 @@ describe('computeCompound', () => {
                 }),
             );
 
-            expect(result.finalNetReal).toBeCloseTo(8348.9316731873, PRECISION_DIGITS);
-            expect(result.netRealGains).toBeCloseTo(-1651.0683268127, PRECISION_DIGITS);
+            expect(result.finalNetReal).toBeCloseTo(8305.84, PRECISION_DIGITS);
+            expect(result.netRealGains).toBeCloseTo(-1694.16, PRECISION_DIGITS);
             // Gross is driven by annualRate = 0, so it stays flat at the capital.
             expect(result.finalGross).toBe(10000);
         });
@@ -200,9 +215,9 @@ describe('computeCompound', () => {
 
     describe('inflation', () => {
         it('deflates netRealAdjusted by the compounded inflation rate', () => {
-            // netReal (see the tax test above)      = 11376.7636737639
+            // netReal (see the tax test above)      = 11337.112
             // 1.02^3                                = 1.061208
-            // netRealAdjusted = netReal / 1.02^3    = 10720.5785046512
+            // netRealAdjusted = netReal / 1.02^3    = 10683.2138468613
             const result = computeCompound(
                 makeInputs({
                     initialCapital: 10000,
@@ -214,14 +229,14 @@ describe('computeCompound', () => {
                 }),
             );
 
-            expect(result.finalNetReal).toBeCloseTo(11376.7636737639, PRECISION_DIGITS);
-            expect(result.finalNetRealAdjusted).toBeCloseTo(10720.5785046512, PRECISION_DIGITS);
+            expect(result.finalNetReal).toBeCloseTo(11337.112, PRECISION_DIGITS);
+            expect(result.finalNetRealAdjusted).toBeCloseTo(10683.2138468613, PRECISION_DIGITS);
         });
 
         it('leaves netRealAdjusted equal to netReal when inflation is disabled', () => {
             // inflationEnabled: false means no deflation is applied, so the
             // adjusted figure must collapse back onto the nominal net figure:
-            //   netRealAdjusted = netReal = 11376.7636737639
+            //   netRealAdjusted = netReal = 11337.112
             // (Same inputs as the test above, only the flag differs.)
             const result = computeCompound(
                 makeInputs({
@@ -234,16 +249,16 @@ describe('computeCompound', () => {
                 }),
             );
 
-            expect(result.finalNetReal).toBeCloseTo(11376.7636737639, PRECISION_DIGITS);
-            expect(result.finalNetRealAdjusted).toBeCloseTo(11376.7636737639, PRECISION_DIGITS);
+            expect(result.finalNetReal).toBeCloseTo(11337.112, PRECISION_DIGITS);
+            expect(result.finalNetRealAdjusted).toBeCloseTo(11337.112, PRECISION_DIGITS);
         });
     });
 
     describe('shortfall', () => {
         it('equals grossGains minus netRealGains', () => {
-            // gross gain 1966.8052482342, taxed at 30% -> net gain 1376.7636737639
-            // shortfall = 1966.8052482342 - 1376.7636737639 = 590.0415744703
-            //           = 1966.8052482342 * 0.30
+            // gross gain 1910.16, taxed at 30% -> net gain 1337.112
+            // shortfall = 1910.16 - 1337.112 = 573.048
+            //           = 1910.16 * 0.30
             const result = computeCompound(
                 makeInputs({
                     initialCapital: 10000,
@@ -253,7 +268,7 @@ describe('computeCompound', () => {
                 }),
             );
 
-            expect(result.shortfall).toBeCloseTo(590.0415744703, PRECISION_DIGITS);
+            expect(result.shortfall).toBeCloseTo(573.048, PRECISION_DIGITS);
             expect(result.shortfall).toBeCloseTo(
                 result.grossGains - result.netRealGains,
                 PRECISION_DIGITS,
@@ -314,7 +329,7 @@ describe('computeCompound', () => {
             const last = result.points[result.points.length - 1];
 
             expect(last.year).toBe(10);
-            expect(last.gross).toBeCloseTo(44665.2683701854, PRECISION_DIGITS);
+            expect(last.gross).toBeCloseTo(44046.1030376749, PRECISION_DIGITS);
             expect(last.contributions).toBe(29000);
             expect(result.finalGross).toBe(last.gross);
             expect(result.invested).toBe(last.contributions);

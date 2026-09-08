@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Modules\Subscriptions\Enums\Permission;
-use App\Modules\Subscriptions\Enums\Plan;
 use App\Modules\User\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
@@ -24,10 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         foreach (Permission::cases() as $permission) {
             Gate::define($permission->value, function (User $user) use ($permission): bool {
-                return match ($user->subscription_plan) {
-                    Plan::FREE => $permission === Permission::CREATE_PROJECT,
-                    Plan::PRO_MONTHLY, Plan::PRO_YEARLY, Plan::ENTERPRISE => true,
-                };
+                return $user->subscription_plan->grants($permission);
             });
         }
     }

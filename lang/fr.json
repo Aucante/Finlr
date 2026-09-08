@@ -79,6 +79,10 @@
         "yearTick_other": "{{count}} ans",
         "tooltipYear": "Année {{year}}"
     },
+    "disclaimer": {
+        "text": "Estimation rapide, hors fiscalité réelle et frais détaillés — pour un résultat fiscalement précis,",
+        "cta": "utilisez un simulateur précis"
+    },
     "footer": {
         "copyright": "© {{year}} Finlr. Tous droits réservés."
     },

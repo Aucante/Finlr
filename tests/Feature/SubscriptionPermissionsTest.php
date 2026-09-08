@@ -50,6 +50,19 @@ class SubscriptionPermissionsTest extends TestCase
         $this->assertSame(Plan::PRO_YEARLY, $user->subscription_plan);
     }
 
+    public function test_plan_grants_the_correct_permissions(): void
+    {
+        $this->assertTrue(Plan::FREE->grants(Permission::CREATE_PROJECT));
+        $this->assertFalse(Plan::FREE->grants(Permission::EXPORT_REPORTS));
+        $this->assertFalse(Plan::FREE->grants(Permission::ADVANCED_CALCULATOR));
+
+        foreach ([Plan::PRO_MONTHLY, Plan::PRO_YEARLY, Plan::ENTERPRISE] as $paidPlan) {
+            $this->assertTrue($paidPlan->grants(Permission::CREATE_PROJECT));
+            $this->assertTrue($paidPlan->grants(Permission::EXPORT_REPORTS));
+            $this->assertTrue($paidPlan->grants(Permission::ADVANCED_CALCULATOR));
+        }
+    }
+
     public function test_plan_is_paid_and_max_projects_allowed(): void
     {
         $this->assertFalse(Plan::FREE->isPaid());
