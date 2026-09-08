@@ -32,7 +32,14 @@ class RunFireProjectionController extends Controller
             return back()->withErrors(['simulation' => __('simulator.fire.form.invalidInput')]);
         }
 
-        $scenario = $save->handle($request->user(), $input, $result, $request->name());
+        $user = $request->user();
+
+        // The route sits behind the `auth` middleware, so $user is never
+        // null in practice; PHPStan still needs this explicit proof to
+        // allow passing a non-nullable User to SaveFireScenarioAction::handle().
+        abort_if($user === null, 403);
+
+        $scenario = $save->handle($user, $input, $result, $request->name());
 
         return redirect()->route('scenarios.show', $scenario);
     }

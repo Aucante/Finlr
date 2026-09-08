@@ -21,6 +21,16 @@ class SettingsTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_a_guest_is_redirected_to_login(): void
+    {
+        $this->get('/settings')->assertRedirect(route('login'));
+
+        $this->patch('/settings', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ])->assertRedirect(route('login'));
+    }
+
     public function test_settings_routes_are_closed_to_users_with_an_unverified_email(): void
     {
         $user = User::factory()->unverified()->create();

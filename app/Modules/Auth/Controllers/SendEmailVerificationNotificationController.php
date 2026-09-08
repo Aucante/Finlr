@@ -11,7 +11,15 @@ class SendEmailVerificationNotificationController extends Controller
 {
     public function __invoke(Request $request, SendEmailVerificationNotificationAction $action): RedirectResponse
     {
-        if (! $action->handle($request->user())) {
+        $user = $request->user();
+
+        // The route sits behind the `auth` middleware, so $user is never
+        // null in practice; PHPStan still needs this explicit proof to
+        // allow passing a non-nullable User to
+        // SendEmailVerificationNotificationAction::handle().
+        abort_if($user === null, 403);
+
+        if (! $action->handle($user)) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
