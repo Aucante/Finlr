@@ -32,6 +32,12 @@ class HandleInertiaRequests extends Middleware
                     'name' => $user->name,
                     'email' => $user->email,
                     'email_verified_at' => $user->email_verified_at,
+                    // Derived boolean only — never the raw timestamp or
+                    // column name itself, and never any of the
+                    // two_factor_codes/two_factor_trusted_devices data,
+                    // which live on separate models never loaded here
+                    // (CONCEPTION.md, section 1, point 9 de la relecture).
+                    'two_factor_enabled' => $user->two_factor_enabled_at !== null,
                 ],
                 'plan' => $user?->subscription_plan?->value,
                 'permissions' => $user

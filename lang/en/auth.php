@@ -27,6 +27,10 @@ return [
             'code_line' => 'Verification code: :code',
             'expiry_notice' => 'This code expires in :minutes minutes. If you did not request this, you can safely ignore this email.',
         ],
+        'challenge' => [
+            'invalid_code' => 'This code is incorrect or has expired.',
+            'session_expired' => 'Your sign-in attempt has expired. Please sign in again.',
+        ],
     ],
 
 ];

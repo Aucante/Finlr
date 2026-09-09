@@ -24,6 +24,10 @@ return [
             'code_line' => 'Codice di verifica: :code',
             'expiry_notice' => 'Questo codice scade tra :minutes minuti. Se non hai richiesto tu questo codice, puoi ignorare questa email.',
         ],
+        'challenge' => [
+            'invalid_code' => 'Questo codice non è corretto o è scaduto.',
+            'session_expired' => 'Il tuo tentativo di accesso è scaduto. Accedi di nuovo.',
+        ],
     ],
 
 ];

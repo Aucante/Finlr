@@ -3,6 +3,7 @@
 use App\Modules\Auth\Controllers\DestroySessionController;
 use App\Modules\Auth\Controllers\HandleOAuthCallbackController;
 use App\Modules\Auth\Controllers\RedirectToOAuthProviderController;
+use App\Modules\Auth\Controllers\ResendTwoFactorCodeController;
 use App\Modules\Auth\Controllers\ResetPasswordController;
 use App\Modules\Auth\Controllers\SendEmailVerificationNotificationController;
 use App\Modules\Auth\Controllers\SendPasswordResetLinkController;
@@ -11,11 +12,13 @@ use App\Modules\Auth\Controllers\ShowForgotPasswordFormController;
 use App\Modules\Auth\Controllers\ShowLoginFormController;
 use App\Modules\Auth\Controllers\ShowRegistrationFormController;
 use App\Modules\Auth\Controllers\ShowResetPasswordFormController;
+use App\Modules\Auth\Controllers\ShowTwoFactorChallengeFormController;
 use App\Modules\Auth\Controllers\ShowVerifyEmailPromptController;
 use App\Modules\Auth\Controllers\StoreConfirmedPasswordController;
 use App\Modules\Auth\Controllers\StoreSessionController;
 use App\Modules\Auth\Controllers\StoreUserController;
 use App\Modules\Auth\Controllers\UpdatePasswordController;
+use App\Modules\Auth\Controllers\VerifyTwoFactorCodeController;
 use App\Modules\Auth\Controllers\VerifyUserEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +33,21 @@ Route::middleware('guest')->group(function () {
         ->name('login');
 
     Route::post('login', StoreSessionController::class);
+
+    // Reachable while Auth::check() is false — a pending 2FA login never
+    // calls Auth::login() (CONCEPTION.md, section 3), so `guest`
+    // middleware is correct here even though the user already gave a
+    // valid password.
+    Route::get('two-factor-challenge', ShowTwoFactorChallengeFormController::class)
+        ->name('two-factor.challenge');
+
+    Route::post('two-factor-challenge', VerifyTwoFactorCodeController::class)
+        ->middleware('throttle:two-factor-verify')
+        ->name('two-factor.verify');
+
+    Route::post('two-factor-challenge/resend', ResendTwoFactorCodeController::class)
+        ->middleware('throttle:two-factor-resend')
+        ->name('two-factor.resend');
 
     Route::get('forgot-password', ShowForgotPasswordFormController::class)
         ->name('password.request');

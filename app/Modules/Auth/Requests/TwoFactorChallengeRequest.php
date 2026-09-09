@@ -6,10 +6,9 @@ use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
-class LoginRequest extends FormRequest
+class TwoFactorChallengeRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -22,16 +21,15 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'code' => ['required', 'string', 'size:6'],
+            'remember_device' => ['sometimes', 'boolean'],
         ];
     }
 
     /**
-     * Credential checking itself now lives in AuthenticateSessionAction
-     * (CONCEPTION.md, section 3) — this Request keeps only its validation
-     * and throttle role: rules() above, and ensureIsNotRateLimited() /
-     * throttleKey() below, both still called directly by the Action.
+     * Calqué verbatim sur LoginRequest::ensureIsNotRateLimited()
+     * (CONCEPTION.md, section 7) : même RateLimiter, même event Lockout,
+     * mêmes clés de traduction auth.throttle.
      *
      * @throws ValidationException
      */
@@ -46,7 +44,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'code' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -55,6 +53,6 @@ class LoginRequest extends FormRequest
 
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return 'two-factor-verify|'.$this->session()->get('two_factor.pending_user_id').'|'.$this->ip();
     }
 }

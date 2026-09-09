@@ -20,12 +20,17 @@ class SharedInertiaPropsTest extends TestCase
             ->get('/dashboard')
             ->assertInertia(fn (Assert $page) => $page
                 // The scoped assertion fails if auth.user carries any extra key,
-                // so this locks the payload down to exactly these four fields.
+                // so this locks the payload down to exactly these five fields.
                 ->has('auth.user', fn (Assert $sharedUser) => $sharedUser
                     ->where('id', $user->id)
                     ->where('name', $user->name)
                     ->where('email', $user->email)
                     ->where('email_verified_at', $user->email_verified_at?->toJSON())
+                    // Derived boolean only — see the test below for what
+                    // must never accompany it (the raw timestamp, or any
+                    // data from the separate two_factor_codes /
+                    // two_factor_trusted_devices tables).
+                    ->where('two_factor_enabled', false)
                 )
             );
     }
@@ -42,6 +47,8 @@ class SharedInertiaPropsTest extends TestCase
             ->missing('auth.user.subscription_plan')
             ->missing('auth.user.created_at')
             ->missing('auth.user.updated_at')
+            // The raw timestamp never leaks, only the derived boolean above.
+            ->missing('auth.user.two_factor_enabled_at')
             ->etc()
         );
 
