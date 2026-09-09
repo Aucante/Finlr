@@ -159,12 +159,4 @@ When `CalculatorEngineInterface` is injected into actions or controllers, the `C
 - Otherwise → Silently falls back to the **Dummy Engine**.
 
 
-### Testing & Switching Calculator Engine Locally
 
-You can explicitly toggle between the private package and the dummy fallback in your environment.
-
-#### Force the Dummy Engine (Local Dev / Offline Test)
-Add this line to your `.env` file:
-
-```env
-CALCULATOR_FORCE_DUMMY=true

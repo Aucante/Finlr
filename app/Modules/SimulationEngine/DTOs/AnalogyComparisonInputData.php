@@ -10,7 +10,7 @@ use App\Modules\SimulationEngine\Enums\AccountType;
  * DTO carries the shared simulation parameters (initial amount, DCA,
  * duration, fees, inflation, fiscal profile) requested from the user only
  * once, plus the single field that differs between the two scenarios: the
- * envelope type — the design validated in RAPPORT.md §6.1, reproducing the
+ * envelope type — the design validated in CONCEPTION.md §6.1, reproducing the
  * guarantee that vendor/saucante74/finlr-engine's own
  * manual_test_analogy.php enforces at the point of input (docs/API.md §3:
  * only the horizon is verified by the package itself, not the amount or
