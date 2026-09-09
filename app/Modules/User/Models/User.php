@@ -42,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
+            'two_factor_enabled_at' => 'datetime',
             'password' => 'hashed',
             'subscription_plan' => Plan::class,
         ];

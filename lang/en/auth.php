@@ -19,4 +19,14 @@ return [
     'oauth_failed' => 'We could not sign you in with that provider. Please try again.',
     'oauth_account_exists' => 'An account already exists for this email address. Please sign in to that account first, then try connecting this provider again.',
 
+    'two_factor' => [
+        'mail' => [
+            'subject' => 'Your login code',
+            'greeting' => 'Hello!',
+            'intro' => 'Here is the code to complete your sign-in.',
+            'code_line' => 'Verification code: :code',
+            'expiry_notice' => 'This code expires in :minutes minutes. If you did not request this, you can safely ignore this email.',
+        ],
+    ],
+
 ];
