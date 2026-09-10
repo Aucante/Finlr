@@ -49,6 +49,29 @@ class RateLimitServiceProvider extends ServiceProvider
 
     private const TWO_FACTOR_VERIFY_ATTEMPTS_PER_MINUTE_PER_IP = 5;
 
+    // Authenticated, self-scoped counterpart to two-factor-resend: sending
+    // the /settings activation code is the same "real email, real cost"
+    // concern, just without a pending session to key off — the
+    // authenticated user's own id is already an unambiguous key.
+    private const TWO_FACTOR_ENABLE_ATTEMPTS_PER_MINUTE = 1;
+
+    private const TWO_FACTOR_ENABLE_ATTEMPTS_PER_HOUR = 5;
+
+    private const TWO_FACTOR_ENABLE_ATTEMPTS_PER_MINUTE_PER_IP = 5;
+
+    // Authenticated, self-scoped counterpart to two-factor-verify: same
+    // class of endpoint (brute-forcing a 6-digit code), but a single
+    // structural layer only — unlike two-factor-verify this is not paired
+    // with an applicative FormRequest::ensureIsNotRateLimited(), since
+    // guessing this code only ever affects the account the attacker's own
+    // session already belongs to (RAPPORT.md, Lot D, spells out the
+    // reasoning in full).
+    private const TWO_FACTOR_CONFIRM_ATTEMPTS_PER_MINUTE = 1;
+
+    private const TWO_FACTOR_CONFIRM_ATTEMPTS_PER_HOUR = 5;
+
+    private const TWO_FACTOR_CONFIRM_ATTEMPTS_PER_MINUTE_PER_IP = 5;
+
     public function boot(): void
     {
         RateLimiter::for('register', fn (Request $request): Limit => Limit::perMinute(self::REGISTER_ATTEMPTS_PER_MINUTE)
@@ -97,6 +120,24 @@ class RateLimitServiceProvider extends ServiceProvider
             Limit::perMinute(self::TWO_FACTOR_VERIFY_ATTEMPTS_PER_MINUTE_PER_IP)
                 ->by($this->ipKey($request)),
         ]);
+
+        RateLimiter::for('two-factor-enable', fn (Request $request): array => [
+            Limit::perMinute(self::TWO_FACTOR_ENABLE_ATTEMPTS_PER_MINUTE)
+                ->by($this->userKey($request)),
+            Limit::perHour(self::TWO_FACTOR_ENABLE_ATTEMPTS_PER_HOUR)
+                ->by($this->userKey($request)),
+            Limit::perMinute(self::TWO_FACTOR_ENABLE_ATTEMPTS_PER_MINUTE_PER_IP)
+                ->by($this->ipKey($request)),
+        ]);
+
+        RateLimiter::for('two-factor-confirm', fn (Request $request): array => [
+            Limit::perMinute(self::TWO_FACTOR_CONFIRM_ATTEMPTS_PER_MINUTE)
+                ->by($this->userKey($request)),
+            Limit::perHour(self::TWO_FACTOR_CONFIRM_ATTEMPTS_PER_HOUR)
+                ->by($this->userKey($request)),
+            Limit::perMinute(self::TWO_FACTOR_CONFIRM_ATTEMPTS_PER_MINUTE_PER_IP)
+                ->by($this->ipKey($request)),
+        ]);
     }
 
     private function ipKey(Request $request): string
@@ -112,5 +153,13 @@ class RateLimitServiceProvider extends ServiceProvider
     private function pendingTwoFactorKey(Request $request, string $prefix): string
     {
         return '2fa-'.$prefix.':user:'.$request->session()->get('two_factor.pending_user_id');
+    }
+
+    // Same style as SingleEnvelopeSimulator's RateLimitServiceProvider::
+    // userKey() — these routes sit behind `auth`, so $request->user() is
+    // never null in practice.
+    private function userKey(Request $request): string
+    {
+        return 'user:'.$request->user()->id;
     }
 }

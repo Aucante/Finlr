@@ -2,6 +2,10 @@
 
 use App\Modules\AnalogySimulator\Controllers\RunAnalogyComparisonController;
 use App\Modules\AnalogySimulator\Controllers\ShowAnalogySimulatorController;
+use App\Modules\Auth\Controllers\ConfirmTwoFactorActivationController;
+use App\Modules\Auth\Controllers\DisableTwoFactorController;
+use App\Modules\Auth\Controllers\ForgetTrustedDevicesController;
+use App\Modules\Auth\Controllers\RequestTwoFactorActivationController;
 use App\Modules\FireSimulator\Controllers\RunFireProjectionController;
 use App\Modules\FireSimulator\Controllers\ShowFireSimulatorController;
 use App\Modules\FreemiumCalculator\Controllers\ShowFreemiumCalculatorController;
@@ -29,6 +33,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings', EditSettingsController::class)->name('settings.edit');
     Route::patch('/settings', UpdateProfileController::class)->name('settings.update');
     Route::delete('/settings', DeleteAccountController::class)->name('settings.destroy');
+
+    Route::post('/settings/two-factor', RequestTwoFactorActivationController::class)
+        ->middleware('throttle:two-factor-enable')
+        ->name('two-factor.enable');
+
+    Route::post('/settings/two-factor/confirm', ConfirmTwoFactorActivationController::class)
+        ->middleware('throttle:two-factor-confirm')
+        ->name('two-factor.confirm');
+
+    Route::delete('/settings/two-factor', DisableTwoFactorController::class)->name('two-factor.disable');
+
+    Route::delete('/settings/two-factor/trusted-devices', ForgetTrustedDevicesController::class)
+        ->name('two-factor.trusted-devices.forget');
 
     Route::get('/scenarios/{scenario}', ShowScenarioController::class)->name('scenarios.show');
     Route::patch('/scenarios/{scenario}', RenameScenarioController::class)->name('scenarios.rename');
