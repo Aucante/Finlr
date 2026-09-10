@@ -51,6 +51,21 @@ class TwoFactorSettingsTest extends TestCase
         $this->assertNull($user->fresh()->two_factor_enabled_at);
     }
 
+    public function test_requesting_activation_is_refused_when_two_factor_is_already_enabled(): void
+    {
+        // Server-side guard, not a frontend-only precondition — anyone
+        // can call this route directly regardless of what button the UI
+        // renders (RAPPORT.md, Lot D, "Points restés non traités").
+        Notification::fake();
+        $user = User::factory()->twoFactorEnabled()->create();
+
+        $response = $this->actingAs($user)->post('/settings/two-factor');
+
+        $response->assertStatus(409);
+        Notification::assertNothingSent();
+        $this->assertDatabaseMissing('two_factor_codes', ['user_id' => $user->id]);
+    }
+
     public function test_confirming_activation_with_the_correct_code_enables_two_factor(): void
     {
         Notification::fake();
