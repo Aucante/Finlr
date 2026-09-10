@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Modules\Auth\Actions\ResolveTrustedDeviceAction;
 use App\Modules\User\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -109,5 +110,25 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
         $response->assertRedirect('/');
+    }
+
+    public function test_logout_does_not_clear_the_trusted_device_cookie(): void
+    {
+        // Guard against a well-intentioned but blind future change to
+        // DestroySessionAction (e.g. "let's clear all our cookies on
+        // logout for hygiene") — this cookie must deliberately survive
+        // logout for the 30-day trust window (CONCEPTION.md, section 4,
+        // "Survie du cookie de confiance au logout") to mean anything in
+        // practice. Would fail if a future
+        // Cookie::forget(ResolveTrustedDeviceAction::COOKIE_NAME) were
+        // added to the logout flow.
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('/logout');
+
+        $cookie = collect($response->headers->getCookies())
+            ->first(fn ($cookie) => $cookie->getName() === ResolveTrustedDeviceAction::COOKIE_NAME);
+
+        $this->assertNull($cookie);
     }
 }
