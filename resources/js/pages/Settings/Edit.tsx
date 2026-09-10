@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import AccountStateCard from '@/features/user/components/AccountStateCard';
 import DeleteUserForm from '@/features/user/components/DeleteUserForm';
 import SimulationPreferencesCard from '@/features/user/components/SimulationPreferencesCard';
+import TwoFactorForm from '@/features/user/components/TwoFactorForm';
 import UpdatePasswordForm from '@/features/user/components/UpdatePasswordForm';
 import UpdateProfileInformationForm from '@/features/user/components/UpdateProfileInformationForm';
 import type { AuthenticatedPageProps } from '@/types';
@@ -94,6 +95,11 @@ export default function Edit({
                     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2 lg:gap-8">
                         <div className="flex flex-col gap-6">
                             <UpdatePasswordForm status={status} />
+
+                            <TwoFactorForm
+                                enabled={auth.user.two_factor_enabled}
+                                status={status}
+                            />
 
                             <SimulationPreferencesCard />
 

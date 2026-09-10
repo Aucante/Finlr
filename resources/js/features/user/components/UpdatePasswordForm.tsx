@@ -4,7 +4,6 @@ import { useMemo, useRef, useState, type SubmitEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import PasswordRequirementsChecklist from '@/components/PasswordRequirementsChecklist';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
     Card,
     CardContent,
@@ -269,31 +268,6 @@ export default function UpdatePasswordForm({ status }: UpdatePasswordFormProps) 
                         >
                             {t(`settings.security.strength.${strength}`)}
                         </span>
-                    </div>
-
-                    <div className="flex items-start gap-3 rounded-lg border border-dashed border-border p-4">
-                        <Checkbox
-                            id="two_factor"
-                            checked={false}
-                            disabled
-                            aria-label={t('settings.security.twoFactor.title')}
-                        />
-                        <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                                <Label
-                                    htmlFor="two_factor"
-                                    className="font-medium text-foreground"
-                                >
-                                    {t('settings.security.twoFactor.title')}
-                                </Label>
-                                <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
-                                    {t('settings.security.twoFactor.comingSoon')}
-                                </span>
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                                {t('settings.security.twoFactor.description')}
-                            </p>
-                        </div>
                     </div>
 
                     <div className="flex items-center gap-4">

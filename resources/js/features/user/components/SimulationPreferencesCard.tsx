@@ -18,7 +18,7 @@ export default function SimulationPreferencesCard() {
             <CardHeader className="gap-1.5 border-b border-border py-5">
                 <div className="flex items-baseline gap-2">
                     <span aria-hidden className="font-mono text-xs text-brand">
-                        03
+                        04
                     </span>
                     <CardTitle className="text-base">
                         {t('settings.simulationPreferences.title')}

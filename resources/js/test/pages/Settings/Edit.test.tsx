@@ -13,6 +13,7 @@ const user = {
     name: 'Jane Doe',
     email: 'jane@example.com',
     email_verified_at: '2024-01-01T00:00:00.000Z',
+    two_factor_enabled: false,
 };
 
 const defaultProps = {
@@ -51,6 +52,26 @@ describe('Settings Edit page', () => {
         ).toBeInTheDocument();
     });
 
+    it('renders the two-factor authentication section with its current status', () => {
+        render(<Edit {...defaultProps} />);
+
+        expect(
+            screen.getByText(
+                i18n.t('settings.security.twoFactor.title'),
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                i18n.t('settings.security.twoFactor.statusDisabled'),
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: i18n.t('settings.security.twoFactor.enableButton'),
+            }),
+        ).toBeInTheDocument();
+    });
+
     it('renders the account state card with plan, member since and scenario count', () => {
         render(<Edit {...defaultProps} />);
 
@@ -61,6 +82,33 @@ describe('Settings Edit page', () => {
         expect(screen.getByText('jane@example.com')).toBeInTheDocument();
         expect(screen.getByText(i18n.t('settings.account.plans.free'))).toBeInTheDocument();
         expect(screen.getByText('3')).toBeInTheDocument();
+    });
+
+    it('reflects a disabled two-factor status in the account state card', () => {
+        render(<Edit {...defaultProps} />);
+
+        expect(
+            screen.getByText(i18n.t('settings.account.twoFactorDisabled')),
+        ).toBeInTheDocument();
+    });
+
+    it('reflects an enabled two-factor status in the account state card', () => {
+        vi.spyOn(inertia, 'usePage').mockReturnValue({
+            url: '/settings',
+            props: {
+                auth: {
+                    user: { ...user, two_factor_enabled: true },
+                    plan: 'free',
+                    permissions: [],
+                },
+            },
+        } as unknown as ReturnType<typeof inertia.usePage>);
+
+        render(<Edit {...defaultProps} />);
+
+        expect(
+            screen.getByText(i18n.t('settings.account.twoFactorEnabled')),
+        ).toBeInTheDocument();
     });
 
     it('renders a logout link inside the account state card', () => {

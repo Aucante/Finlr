@@ -170,6 +170,17 @@
             "statusSent": "Un nouveau lien de vérification a été envoyé à l'adresse e-mail fournie lors de votre inscription.",
             "resend": "Renvoyer l'e-mail de vérification",
             "logout": "Déconnexion"
+        },
+        "twoFactorChallenge": {
+            "eyebrow": "Vérification",
+            "title": "Vérification en deux étapes",
+            "description": "Saisissez le code à 6 chiffres que nous venons d'envoyer à votre adresse e-mail pour terminer la connexion.",
+            "codeLabel": "Code de vérification",
+            "rememberDevice": "Se souvenir de cet appareil pendant 30 jours",
+            "submit": "Vérifier",
+            "resend": "Renvoyer le code",
+            "resendSent": "Un nouveau code a été envoyé.",
+            "resendCooldown": "Vous pourrez redemander un code dans {{seconds}}s"
         }
     },
     "dashboard": {
@@ -755,7 +766,34 @@
             "twoFactor": {
                 "title": "Vérification en deux étapes",
                 "description": "Un code à six chiffres est demandé à chaque nouvelle connexion.",
-                "comingSoon": "Bientôt disponible"
+                "statusEnabled": "Activée",
+                "statusDisabled": "Désactivée",
+                "enableButton": "Activer la double authentification",
+                "activation": {
+                    "description": "Nous avons envoyé un code à 6 chiffres à votre adresse e-mail. Saisissez-le ci-dessous pour terminer l'activation de la double authentification.",
+                    "codeLabel": "Code de vérification",
+                    "confirmButton": "Confirmer et activer",
+                    "cancelButton": "Annuler",
+                    "resendButton": "Renvoyer le code",
+                    "resendSent": "Un nouveau code a été envoyé.",
+                    "resendCooldown": "Vous pourrez redemander un code dans {{seconds}}s"
+                },
+                "disable": {
+                    "button": "Désactiver la double authentification",
+                    "modalTitle": "Désactiver la double authentification ?",
+                    "modalDescription": "Saisissez votre mot de passe actuel pour confirmer.",
+                    "password": "Mot de passe",
+                    "cancel": "Annuler",
+                    "confirm": "Désactiver"
+                },
+                "trustedDevices": {
+                    "button": "Oublier tous les appareils de confiance",
+                    "description": "Retire la confiance accordée à tous les appareils mémorisés, sur ce navigateur et les autres."
+                },
+                "confirmationSentMessage": "Un code de confirmation a été envoyé à votre adresse e-mail.",
+                "enabledMessage": "La double authentification est maintenant activée.",
+                "disabledMessage": "La double authentification a été désactivée.",
+                "trustedDevicesForgottenMessage": "Tous les appareils de confiance ont été oubliés."
             },
             "save": "Mettre à jour",
             "passwordUpdated": "Votre mot de passe a été mis à jour."
@@ -785,6 +823,7 @@
             "memberSince": "Membre depuis",
             "scenariosSaved": "Scénarios enregistrés",
             "twoFactor": "Double authentification",
+            "twoFactorEnabled": "activée",
             "twoFactorDisabled": "désactivée",
             "logout": "Déconnexion",
             "dataNotice": "Finlr ne conserve aucune donnée bancaire — uniquement vos hypothèses de simulation, pendant 24 mois.",
