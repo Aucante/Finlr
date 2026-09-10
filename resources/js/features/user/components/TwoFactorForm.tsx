@@ -82,9 +82,16 @@ export default function TwoFactorForm({ enabled, status }: TwoFactorFormProps) {
                 )}
 
                 {enabled ? (
-                    <div className="flex flex-wrap items-center gap-3">
-                        <TwoFactorDisableDialog />
-                        <ForgetTrustedDevicesButton />
+                    <div className="flex flex-col gap-3 rounded-lg border border-dashed border-border p-4">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <TwoFactorDisableDialog />
+                            <ForgetTrustedDevicesButton />
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            {t(
+                                'settings.security.twoFactor.trustedDevices.description',
+                            )}
+                        </p>
                     </div>
                 ) : (
                     <TwoFactorActivationForm />

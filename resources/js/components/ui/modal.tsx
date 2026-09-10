@@ -4,7 +4,7 @@ import {
     Transition,
     TransitionChild,
 } from '@headlessui/react';
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 
 interface ModalProps {
     children: ReactNode;
@@ -21,6 +21,16 @@ export default function Modal({
     closeable = true,
     onClose = () => {},
 }: ModalProps) {
+    // A hardcoded id here would collide once more than one Modal is
+    // mounted on the same page (now true: DeleteUserForm and
+    // TwoFactorDisableDialog both render one) — two elements sharing the
+    // same `id` confuses Headless UI's own internal bookkeeping for that
+    // id (focus restoration / outside-click targeting), which is what
+    // made a modal's own close transition get stuck and visually
+    // overlap the next one opened. useId() keeps this id stable per
+    // component instance and guaranteed unique across the page.
+    const id = useId();
+
     const close = () => {
         if (closeable) {
             onClose();
@@ -39,8 +49,8 @@ export default function Modal({
         <Transition show={show} leave="duration-200">
             <Dialog
                 as="div"
-                id="modal"
-                className="fixed inset-0 z-50 flex transform items-center overflow-y-auto px-4 py-6 transition-all sm:px-0"
+                id={id}
+                className="fixed inset-0 z-50 flex transform items-center overflow-y-auto px-4 py-6 sm:px-0"
                 onClose={close}
             >
                 <TransitionChild
@@ -51,7 +61,20 @@ export default function Modal({
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="absolute inset-0 bg-foreground/50" />
+                    {/*
+                        A modal backdrop must stay a dark scrim in both
+                        themes — `bg-foreground/50` was wrong here: the
+                        `foreground` token is the theme's *text* color,
+                        which flips to near-white in dark mode
+                        (`--foreground: oklch(0.985 0 0)` under `.dark`,
+                        resources/css/app.css), turning this into a
+                        translucent light wash that fails to dim the page
+                        and lets background content bleed through the
+                        panel instead of sitting behind a proper scrim.
+                        `black/50` is deliberately theme-invariant, unlike
+                        every other color here.
+                    */}
+                    <div className="absolute inset-0 bg-black/50 transition-opacity" />
                 </TransitionChild>
 
                 <TransitionChild
@@ -63,7 +86,7 @@ export default function Modal({
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
                     <DialogPanel
-                        className={`mb-6 transform overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-xl transition-all sm:mx-auto sm:w-full ${maxWidthClass}`}
+                        className={`mb-6 transform overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-xl transition-[opacity,transform] sm:mx-auto sm:w-full ${maxWidthClass}`}
                     >
                         {children}
                     </DialogPanel>

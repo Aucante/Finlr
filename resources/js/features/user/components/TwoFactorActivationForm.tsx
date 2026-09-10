@@ -53,14 +53,20 @@ export default function TwoFactorActivationForm() {
 
     if (!confirming) {
         return (
-            <Button type="button" variant="brand" onClick={startActivation}>
-                {t('settings.security.twoFactor.enableButton')}
-            </Button>
+            <div className="flex items-center rounded-lg border border-dashed border-border p-4">
+                <Button
+                    type="button"
+                    variant="brand"
+                    onClick={startActivation}
+                >
+                    {t('settings.security.twoFactor.enableButton')}
+                </Button>
+            </div>
         );
     }
 
     return (
-        <div className="flex flex-col gap-4 rounded-lg border border-border p-4">
+        <div className="flex flex-col gap-4 rounded-lg border border-dashed border-border p-4">
             <p className="text-sm text-muted-foreground">
                 {t('settings.security.twoFactor.activation.description')}
             </p>

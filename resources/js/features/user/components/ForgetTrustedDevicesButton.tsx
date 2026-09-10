@@ -21,7 +21,7 @@ export default function ForgetTrustedDevicesButton() {
     return (
         <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             onClick={forget}
             disabled={processing}
         >

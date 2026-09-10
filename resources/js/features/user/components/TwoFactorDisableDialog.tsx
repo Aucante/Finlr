@@ -49,7 +49,13 @@ export default function TwoFactorDisableDialog() {
 
     return (
         <>
-            <Button type="button" variant="outline" onClick={confirmDisable}>
+            {/*
+                Destructive, matching DeleteUserForm's own trigger button:
+                both reduce the account's security posture, so the trigger
+                carries the same visual weight as the modal's own confirm
+                action, not a neutral `outline`.
+            */}
+            <Button type="button" variant="destructive" onClick={confirmDisable}>
                 {t('settings.security.twoFactor.disable.button')}
             </Button>
 
