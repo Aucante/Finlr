@@ -28,13 +28,18 @@ class ResendTwoFactorCodeAction
 
         $startedAt = $request->session()->get('two_factor.pending_started_at');
 
-        if (! $startedAt instanceof Carbon) {
+        if ($startedAt === null) {
             throw new PendingTwoFactorSessionExpiredException;
         }
 
+        // Carbon::parse() rather than an `instanceof Carbon` check on
+        // `$startedAt` directly — see ResolvePendingTwoFactorUserAction for
+        // why a session value round-tripped through a real driver comes
+        // back as an ISO-8601 string, never a Carbon instance, under
+        // `config/session.php`'s `serialization => 'json'`.
         $request->session()->put(
             'two_factor.expires_at',
-            now()->addMinutes(TwoFactorCode::VALIDITY_MINUTES)->min($startedAt->clone()->addMinutes(self::ABSOLUTE_CAP_MINUTES)),
+            now()->addMinutes(TwoFactorCode::VALIDITY_MINUTES)->min(Carbon::parse($startedAt)->addMinutes(self::ABSOLUTE_CAP_MINUTES)),
         );
     }
 }

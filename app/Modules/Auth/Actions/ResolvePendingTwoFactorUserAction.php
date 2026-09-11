@@ -23,7 +23,17 @@ class ResolvePendingTwoFactorUserAction
         $userId = $request->session()->get('two_factor.pending_user_id');
         $expiresAt = $request->session()->get('two_factor.expires_at');
 
-        if ($userId === null || ! $expiresAt instanceof Carbon || $expiresAt->isPast()) {
+        // `config/session.php`'s `serialization => 'json'` (Laravel's own
+        // default, chosen to avoid PHP object-injection "gadget chain"
+        // attacks — see that file) means a Carbon value written to the
+        // session comes back as a plain ISO-8601 *string* after a real
+        // round-trip through any persistent session driver, never as a
+        // Carbon instance again. An `instanceof Carbon` check here treated
+        // every pending login as already expired the moment it reached a
+        // second request — Carbon::parse() accepts both that string and an
+        // already-hydrated Carbon instance (e.g. under the `array` driver
+        // used in tests), so it is the round-trip-safe check.
+        if ($userId === null || $expiresAt === null || Carbon::parse($expiresAt)->isPast()) {
             $this->forgetPendingState($request);
 
             throw new PendingTwoFactorSessionExpiredException;
