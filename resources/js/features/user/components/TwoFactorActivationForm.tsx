@@ -7,6 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import useResendCooldown from '@/hooks/useResendCooldown';
 
+interface TwoFactorActivationFormProps {
+    status?: string | null;
+}
+
 /**
  * Activation is deliberately two steps (CONCEPTION.md, section 5):
  * `two_factor_enabled_at` stays null until the confirmation code is
@@ -15,7 +19,9 @@ import useResendCooldown from '@/hooks/useResendCooldown';
  * optimistically as soon as the request is fired, rather than waiting on
  * a server round trip — the email is already in flight either way.
  */
-export default function TwoFactorActivationForm() {
+export default function TwoFactorActivationForm({
+    status,
+}: TwoFactorActivationFormProps) {
     const { t } = useTranslation();
     const [confirming, setConfirming] = useState(false);
     const codeInput = useRef<HTMLInputElement>(null);
@@ -53,10 +59,17 @@ export default function TwoFactorActivationForm() {
 
     if (!confirming) {
         return (
-            <div className="flex items-center rounded-lg border border-dashed border-border p-4">
+            <div className="flex flex-col items-center gap-4 rounded-lg border border-dashed border-border p-6 text-center">
+                {status === 'two-factor-disabled' && (
+                    <p className="text-sm text-muted-foreground">
+                        {t('settings.security.twoFactor.disabledMessage')}
+                    </p>
+                )}
                 <Button
                     type="button"
                     variant="brand"
+                    size="lg"
+                    className="bg-linear-to-b from-brand/80 to-brand text-brand-foreground shadow-lg shadow-brand/25 hover:shadow-brand/40"
                     onClick={startActivation}
                 >
                     {t('settings.security.twoFactor.enableButton')}

@@ -81,6 +81,27 @@ describe('TwoFactorForm', () => {
         ).toBeInTheDocument();
     });
 
+    it('shows the disabled message inside the activation frame, next to the enable button, when two-factor was just disabled', () => {
+        render(
+            <TwoFactorForm
+                enabled={false}
+                status="two-factor-disabled"
+                trustedDevices={[]}
+            />,
+        );
+
+        expect(
+            screen.getByText(
+                i18n.t('settings.security.twoFactor.disabledMessage'),
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: i18n.t('settings.security.twoFactor.enableButton'),
+            }),
+        ).toBeInTheDocument();
+    });
+
     it('opens the disable confirmation modal requiring the current password', async () => {
         const user = userEvent.setup();
         render(<TwoFactorForm enabled={true} status={null} trustedDevices={[]} />);

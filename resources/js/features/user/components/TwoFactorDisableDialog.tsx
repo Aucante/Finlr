@@ -55,7 +55,12 @@ export default function TwoFactorDisableDialog() {
                 carries the same visual weight as the modal's own confirm
                 action, not a neutral `outline`.
             */}
-            <Button type="button" variant="destructive" onClick={confirmDisable}>
+            <Button
+                type="button"
+                variant="destructive"
+                className="self-start border-destructive/30"
+                onClick={confirmDisable}
+            >
                 {t('settings.security.twoFactor.disable.button')}
             </Button>
 
