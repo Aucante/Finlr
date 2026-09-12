@@ -1,9 +1,4 @@
-import {
-    Dialog,
-    DialogPanel,
-    Transition,
-    TransitionChild,
-} from '@headlessui/react';
+import { Dialog, DialogPanel } from '@headlessui/react';
 import type { ReactNode } from 'react';
 
 interface ModalProps {
@@ -35,40 +30,36 @@ export default function Modal({
         '2xl': 'sm:max-w-2xl',
     }[maxWidth];
 
+    // No fade/scale animation here on purpose, after this being the
+    // actual root cause of a real, repeatedly-confirmed bug: wrapping
+    // Dialog in an animated <Transition>/<TransitionChild> (or using
+    // Dialog's own `transition` prop) left the panel permanently stuck
+    // at its `opacity-0`/`translate-y-4` *entering* styles in this
+    // environment — verified live, in a real browser, on a fresh tab:
+    // `getComputedStyle` kept reporting the panel's opacity as 0 no
+    // matter how long the wait, and its className never advanced past
+    // the enter-from classes to the enter-to ones. A backdrop and panel
+    // stuck at opacity 0 while still `fixed inset-0`/still mounted is
+    // exactly what let a click meant for the password field land on
+    // whatever was actually in front of it and close the dialog instead
+    // of focusing the field. Dialog's own `open`/`onClose` already fully
+    // control mount/unmount and focus-trap/outside-click/Escape
+    // behaviour without any animation library involved, so this renders
+    // instantly opaque and correct every time instead of gambling on a
+    // transition library ever finishing.
     return (
-        <Transition show={show} leave="duration-200">
-            <Dialog
-                as="div"
-                id="modal"
-                className="fixed inset-0 z-50 flex transform items-center overflow-y-auto px-4 py-6 transition-all sm:px-0"
-                onClose={close}
-            >
-                <TransitionChild
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="absolute inset-0 bg-foreground/50" />
-                </TransitionChild>
+        <Dialog
+            open={show}
+            onClose={close}
+            className="fixed inset-0 z-50 flex items-center overflow-y-auto px-4 py-6 sm:px-0"
+        >
+            <div aria-hidden="true" className="fixed inset-0 bg-black/50" />
 
-                <TransitionChild
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    enterTo="opacity-100 translate-y-0 sm:scale-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                >
-                    <DialogPanel
-                        className={`mb-6 transform overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-xl transition-all sm:mx-auto sm:w-full ${maxWidthClass}`}
-                    >
-                        {children}
-                    </DialogPanel>
-                </TransitionChild>
-            </Dialog>
-        </Transition>
+            <DialogPanel
+                className={`relative mb-6 w-full overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-xl sm:mx-auto ${maxWidthClass}`}
+            >
+                {children}
+            </DialogPanel>
+        </Dialog>
     );
 }

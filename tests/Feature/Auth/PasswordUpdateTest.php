@@ -2,9 +2,12 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Modules\Auth\Models\TwoFactorCode;
+use App\Modules\Auth\Models\TwoFactorTrustedDevice;
 use App\Modules\User\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class PasswordUpdateTest extends TestCase
@@ -88,5 +91,41 @@ class PasswordUpdateTest extends TestCase
         $response
             ->assertSessionHasErrors('current_password')
             ->assertRedirect('/settings');
+    }
+
+    public function test_updating_the_password_purges_trusted_devices_and_any_pending_two_factor_code(): void
+    {
+        // Independent from the Lot D "disabling 2FA purges devices" test
+        // (CONCEPTION.md, section 4, point 2a de la relecture) — a
+        // password change is the reflex gesture after a suspected
+        // compromise, so UpdatePasswordAction purges on its own, even with
+        // 2FA left enabled.
+        $user = User::factory()->twoFactorEnabled()->create();
+
+        TwoFactorTrustedDevice::query()->create([
+            'user_id' => $user->id,
+            'selector' => Str::random(26),
+            'hashed_validator' => Hash::make(Str::random(40)),
+            'expires_at' => TwoFactorTrustedDevice::newExpiry(),
+        ]);
+
+        TwoFactorCode::query()->create([
+            'user_id' => $user->id,
+            'code_hash' => Hash::make('123456'),
+            'expires_at' => now()->addMinutes(TwoFactorCode::VALIDITY_MINUTES),
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->from('/settings')
+            ->put('/password', [
+                'current_password' => 'password',
+                'password' => 'NewPassword1!',
+                'password_confirmation' => 'NewPassword1!',
+            ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseMissing('two_factor_trusted_devices', ['user_id' => $user->id]);
+        $this->assertDatabaseMissing('two_factor_codes', ['user_id' => $user->id]);
     }
 }

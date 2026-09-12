@@ -5,7 +5,6 @@ namespace App\Modules\Auth\Requests;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -29,24 +28,11 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * @throws ValidationException
-     */
-    public function authenticate(): void
-    {
-        $this->ensureIsNotRateLimited();
-
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
-
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
-        }
-
-        RateLimiter::clear($this->throttleKey());
-    }
-
-    /**
+     * Credential checking itself now lives in AuthenticateSessionAction
+     * (CONCEPTION.md, section 3) — this Request keeps only its validation
+     * and throttle role: rules() above, and ensureIsNotRateLimited() /
+     * throttleKey() below, both still called directly by the Action.
+     *
      * @throws ValidationException
      */
     public function ensureIsNotRateLimited(): void

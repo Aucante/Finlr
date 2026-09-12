@@ -58,7 +58,7 @@ export default function DeleteUserForm() {
             <CardHeader className="gap-1.5 border-b border-destructive/20 py-5">
                 <div className="flex items-baseline gap-2">
                     <span aria-hidden className="font-mono text-xs text-destructive">
-                        04
+                        05
                     </span>
                     <CardTitle className="text-base">
                         {t('settings.dangerZone.title')}
@@ -69,8 +69,12 @@ export default function DeleteUserForm() {
                 </CardDescription>
             </CardHeader>
 
-            <CardContent className="py-6">
-                <Button variant="destructive" onClick={confirmUserDeletion}>
+            <CardContent className="flex justify-center py-6">
+                <Button
+                    variant="destructive"
+                    size="lg"
+                    onClick={confirmUserDeletion}
+                >
                     {t('settings.dangerZone.button')}
                 </Button>
 

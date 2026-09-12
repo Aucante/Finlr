@@ -224,6 +224,40 @@ INTERDICTION ABSOLUE DE COMMITER : n'exécute JAMAIS `git commit`, `git add`, `g
   déjà mensuellement ; seule la dérivation du taux mensuel à partir du taux
   annuel affiché change.
 
+- **2026-09 — Les emails du code de vérification 2FA
+  (`TwoFactorCodeNotification`, `app/Modules/Auth/Notifications/`) sont
+  envoyés dans la locale serveur par défaut (`config('app.locale')`), pas
+  dans la langue affichée à l'utilisateur dans l'interface :**
+    - Ce n'est **pas** un oubli de l'exigence i18n non négociable
+      (« les messages serveur doivent exister dans les trois langues » —
+      voir « Exigences Techniques Non-Négociables » ci-dessus) : les clés
+      sont bien traduites intégralement dans les trois fichiers
+      `lang/{fr,en,it}/auth.php`, exactement comme les clés `oauth_failed`
+      et `oauth_account_exists` l'ont été avant elles, et comme les emails
+      de vérification d'adresse et de réinitialisation de mot de passe qui
+      utilisaient déjà, avant ce chantier, les notifications par défaut de
+      Laravel sans schéma de locale par utilisateur.
+    - La cause : aucune mécanique de locale par utilisateur n'existe dans
+      ce projet — `config('app.locale')` est fixe (pas de colonne `locale`
+      sur `users`, pas de middleware de bascule de langue côté serveur) ;
+      toute l'i18n visible aujourd'hui passe par `react-i18next` côté
+      client uniquement. Introduire une locale par utilisateur pour ce
+      seul email (colonne, préférence dans `/settings`, propagation
+      cohérente aux autres notifications transactionnelles existantes)
+      aurait dépassé le périmètre demandé pour la 2FA — à traiter comme un
+      chantier séparé s'il est un jour demandé.
+    - **Garde-fou de dérive :** si une locale par utilisateur est ajoutée
+      un jour à ce projet (pour n'importe quelle raison, pas seulement la
+      2FA), `TwoFactorCodeNotification` doit être mis à jour pour
+      l'utiliser. Jusque-là, la traduction `it` de ce fichier (et la
+      traduction `fr` dès que `app.locale` ne vaut plus `fr`) reste
+      correcte mais **inerte en pratique** — exactement comme le sont déjà,
+      avant ce chantier, les clés `it/auth.php` existantes (`oauth_failed`,
+      `oauth_account_exists`) : aucun mécanisme ne bascule jamais vers `it`
+      côté serveur aujourd'hui. Point de départ d'une future vérification :
+      cette entrée elle-même, et l'en-tête de `lang/fr/auth.php` /
+      `lang/it/auth.php` qui documente leur statut de surcharge partielle.
+
 ---
 
 ## Qualité de Code & CI

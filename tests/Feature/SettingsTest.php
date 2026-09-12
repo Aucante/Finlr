@@ -50,6 +50,31 @@ class SettingsTest extends TestCase
         $this->assertNotNull($user->fresh());
     }
 
+    public function test_two_factor_settings_routes_are_closed_to_users_with_an_unverified_email(): void
+    {
+        // CONCEPTION.md, section 5, "Middleware verified sur les routes
+        // 2FA" — activating 2FA on an unverified mailbox would let a user
+        // lock themselves out of their own account.
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)->post('/settings/two-factor')
+            ->assertRedirect(route('verification.notice'));
+
+        $this->actingAs($user)->post('/settings/two-factor/confirm', ['code' => '000000'])
+            ->assertRedirect(route('verification.notice'));
+
+        $this->actingAs($user)->delete('/settings/two-factor', ['password' => 'password'])
+            ->assertRedirect(route('verification.notice'));
+
+        $this->actingAs($user)->delete('/settings/two-factor/trusted-devices')
+            ->assertRedirect(route('verification.notice'));
+
+        $this->actingAs($user)->delete('/settings/two-factor/trusted-devices/1')
+            ->assertRedirect(route('verification.notice'));
+
+        $this->assertNull($user->fresh()->two_factor_enabled_at);
+    }
+
     public function test_profile_information_can_be_updated(): void
     {
         $user = User::factory()->create();

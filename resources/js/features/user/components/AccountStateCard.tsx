@@ -93,13 +93,24 @@ export default function AccountStateCard({
                         <dt className="text-muted-foreground">
                             {t('settings.account.twoFactor')}
                         </dt>
-                        <dd className="font-mono text-muted-foreground">
-                            {t('settings.account.twoFactorDisabled')}
+                        <dd
+                            className={cn(
+                                'font-mono',
+                                user.two_factor_enabled
+                                    ? 'text-brand'
+                                    : 'text-muted-foreground',
+                            )}
+                        >
+                            {t(
+                                user.two_factor_enabled
+                                    ? 'settings.account.twoFactorEnabled'
+                                    : 'settings.account.twoFactorDisabled',
+                            )}
                         </dd>
                     </div>
                 </dl>
 
-                <Button asChild variant="outline" className="w-1/4">
+                <Button asChild variant="outline" size="lg" className="self-center">
                     <Link href={route('logout')} method="post" as="button">
                         {t('settings.account.logout')}
                     </Link>

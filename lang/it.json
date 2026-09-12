@@ -170,6 +170,17 @@
             "statusSent": "Un nuovo link di verifica è stato inviato all'indirizzo e-mail fornito durante la registrazione.",
             "resend": "Invia di nuovo l'e-mail di verifica",
             "logout": "Disconnetti"
+        },
+        "twoFactorChallenge": {
+            "eyebrow": "Verifica",
+            "title": "Verifica in due passaggi",
+            "description": "Inserisci il codice a 6 cifre che ti abbiamo appena inviato via e-mail per completare l'accesso.",
+            "codeLabel": "Codice di verifica",
+            "rememberDevice": "Ricorda questo dispositivo per 30 giorni",
+            "submit": "Verifica",
+            "resend": "Invia di nuovo il codice",
+            "resendSent": "È stato inviato un nuovo codice.",
+            "resendCooldown": "Potrai richiedere un nuovo codice tra {{seconds}}s"
         }
     },
     "dashboard": {
@@ -755,7 +766,42 @@
             "twoFactor": {
                 "title": "Verifica in due passaggi",
                 "description": "Ad ogni nuovo accesso viene richiesto un codice a sei cifre.",
-                "comingSoon": "Prossimamente"
+                "statusEnabled": "Attiva",
+                "statusDisabled": "Disattivata",
+                "enableButton": "Attiva l'autenticazione a due fattori",
+                "activation": {
+                    "description": "Abbiamo inviato un codice a 6 cifre al tuo indirizzo e-mail. Inseriscilo qui sotto per completare l'attivazione dell'autenticazione a due fattori.",
+                    "codeLabel": "Codice di verifica",
+                    "confirmButton": "Conferma e attiva",
+                    "cancelButton": "Annulla",
+                    "resendButton": "Invia di nuovo il codice",
+                    "resendSent": "È stato inviato un nuovo codice.",
+                    "resendCooldown": "Potrai richiedere un nuovo codice tra {{seconds}}s"
+                },
+                "disable": {
+                    "button": "Disattiva l'autenticazione a due fattori",
+                    "modalTitle": "Disattivare l'autenticazione a due fattori?",
+                    "modalDescription": "Inserisci la tua password attuale per confermare.",
+                    "password": "Password",
+                    "cancel": "Annulla",
+                    "confirm": "Disattiva"
+                },
+                "trustedDevices": {
+                    "button": "Dimentica tutti i dispositivi attendibili",
+                    "description": "Rimuove la fiducia accordata a tutti i dispositivi memorizzati, su questo browser e sugli altri.",
+                    "listTitle": "Dispositivi attendibili",
+                    "empty": "Nessun dispositivo attendibile al momento.",
+                    "unknownDevice": "Dispositivo non riconosciuto",
+                    "currentDevice": "Questo dispositivo",
+                    "dates": "Aggiunto il {{added}} · scade il {{expires}}",
+                    "forgetOne": "Dimentica",
+                    "forgetOneLabel": "Dimentica il dispositivo {{device}}"
+                },
+                "confirmationSentMessage": "Un codice di conferma è stato inviato al tuo indirizzo e-mail.",
+                "enabledMessage": "L'autenticazione a due fattori è ora attiva.",
+                "disabledMessage": "L'autenticazione a due fattori è stata disattivata.",
+                "trustedDevicesForgottenMessage": "Tutti i dispositivi attendibili sono stati dimenticati.",
+                "trustedDeviceForgottenMessage": "Il dispositivo è stato dimenticato."
             },
             "save": "Aggiorna",
             "passwordUpdated": "La tua password è stata aggiornata."
@@ -785,6 +831,7 @@
             "memberSince": "Membro dal",
             "scenariosSaved": "Scenari salvati",
             "twoFactor": "Autenticazione a due fattori",
+            "twoFactorEnabled": "attiva",
             "twoFactorDisabled": "disattivata",
             "logout": "Esci",
             "dataNotice": "Finlr non conserva alcun dato bancario — solo le tue ipotesi di simulazione, per 24 mesi.",

@@ -13,7 +13,7 @@ use App\Modules\SimulationEngine\DTOs\FiscalProfileData;
  * Converts SimulationEngine's Analogy DTOs to plain arrays for storage in
  * Scenario::$input_payload/$result_payload — same reasoning as
  * MultiEnvelopeSimulator's own MultiEnvelopeScenarioPayload (Étape 2,
- * RAPPORT.md §1.2): SimulationEngine's DTOs are reused as-is, not modified,
+ * CONCEPTION.md §1.2): SimulationEngine's DTOs are reused as-is, not modified,
  * so no toArray() lives on them. Purely mechanical field-by-field mapping.
  */
 final class AnalogyScenarioPayload

@@ -44,4 +44,14 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Indicate that the model has two-factor authentication enabled.
+     */
+    public function twoFactorEnabled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'two_factor_enabled_at' => now(),
+        ]);
+    }
 }

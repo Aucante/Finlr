@@ -66,7 +66,7 @@ enum CalculatorType: string
             // "labelA vs labelB" (the two scenarios actually compared).
             // Unlike MultiEnvelope's blank string above, this is meant to
             // be shown as-is: ScenarioList.tsx's formatWrapper() was
-            // extended (see RAPPORT.md) to pass through any non-empty,
+            // extended (see CONCEPTION.md) to pass through any non-empty,
             // non-code wrapper string instead of collapsing it to "—" —
             // MultiEnvelope's own blank-string case is unaffected.
             // headlineFigure is the magnitude of the gap on the reference

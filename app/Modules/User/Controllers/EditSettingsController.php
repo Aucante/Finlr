@@ -2,6 +2,8 @@
 
 namespace App\Modules\User\Controllers;
 
+use App\Modules\Auth\Actions\ListTrustedDevicesAction;
+use App\Modules\Auth\DTOs\TrustedDeviceData;
 use App\Modules\Shared\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -9,7 +11,7 @@ use Inertia\Response;
 
 class EditSettingsController extends Controller
 {
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request, ListTrustedDevicesAction $listTrustedDevices): Response
     {
         $user = $request->user();
 
@@ -45,6 +47,10 @@ class EditSettingsController extends Controller
             'memberSince' => $user->created_at?->toISOString(),
             'profileUpdatedAt' => $user->updated_at?->toISOString(),
             'scenariosCount' => $user->scenarios()->count(),
+            'trustedDevices' => array_map(
+                fn (TrustedDeviceData $device): array => $device->toArray(),
+                $listTrustedDevices->handle($request, $user),
+            ),
         ]);
     }
 }

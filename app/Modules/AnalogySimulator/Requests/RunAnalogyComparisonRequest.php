@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * Same non-invariant bounds as RunMultiEnvelopeSimulationRequest (Étape 2,
- * RAPPORT.md §1.1) — the package validates none of these numeric fields
+ * CONCEPTION.md §1.1) — the package validates none of these numeric fields
  * either (docs/API.md §2), the bounds here are this application's own.
  */
 class RunAnalogyComparisonRequest extends FormRequest

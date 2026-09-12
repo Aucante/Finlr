@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Auth\Exceptions\PendingTwoFactorSessionExpiredException;
 use App\Modules\Shared\Middleware\HandleInertiaRequests;
 use App\Modules\SimulationEngine\Exceptions\SimulationEngineUnavailableException;
 use Illuminate\Auth\AuthenticationException;
@@ -60,5 +61,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // precisely because it is shared across all of them.
         $exceptions->render(fn (SimulationEngineUnavailableException $exception): RedirectResponse => back()->withErrors([
             'simulation' => __('simulator.calculationFailed'),
+        ]));
+
+        // Closing the tab mid-challenge, or letting the pending window run
+        // out (CONCEPTION.md, section 6), must never surface as a raw 500
+        // — just send the user back to a normal, unauthenticated login.
+        $exceptions->render(fn (PendingTwoFactorSessionExpiredException $exception): RedirectResponse => redirect()->route('login')->withErrors([
+            'email' => __('auth.two_factor.challenge.session_expired'),
         ]));
     })->create();

@@ -7,6 +7,8 @@ export interface User {
     name: string;
     email: string;
     email_verified_at: string | null;
+    /** Mirrors auth.user.two_factor_enabled (HandleInertiaRequests::share()) — derived boolean only, never the raw timestamp. */
+    two_factor_enabled: boolean;
 }
 
 export interface Auth {

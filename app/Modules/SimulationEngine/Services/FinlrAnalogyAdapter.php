@@ -30,7 +30,7 @@ use saucante74\CalculatorEngine\Strategies\FiscalRates as PackageFiscalRates;
  * parameters carried by AnalogyComparisonInputData, then compares them.
  *
  * `defaultOverflowAccountType: null` is passed explicitly to each cascade
- * (RAPPORT.md §6.1): injecting a default overflow pocket would make both
+ * (CONCEPTION.md §6.1): injecting a default overflow pocket would make both
  * scenarios absorb the same total amount regardless of which envelope
  * saturates, erasing the very "amount actually invested" gap the
  * comparison exists to reveal (docs/API.md §3, totalDeposited).

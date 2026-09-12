@@ -170,6 +170,17 @@
             "statusSent": "A new verification link has been sent to the email address you provided during registration.",
             "resend": "Resend verification email",
             "logout": "Log out"
+        },
+        "twoFactorChallenge": {
+            "eyebrow": "Verification",
+            "title": "Two-factor verification",
+            "description": "Enter the 6-digit code we just sent to your email address to finish signing in.",
+            "codeLabel": "Verification code",
+            "rememberDevice": "Remember this device for 30 days",
+            "submit": "Verify",
+            "resend": "Resend code",
+            "resendSent": "A new code has been sent.",
+            "resendCooldown": "You can request a new code in {{seconds}}s"
         }
     },
     "dashboard": {
@@ -755,7 +766,42 @@
             "twoFactor": {
                 "title": "Two-step verification",
                 "description": "A six-digit code is required on every new sign-in.",
-                "comingSoon": "Coming soon"
+                "statusEnabled": "Enabled",
+                "statusDisabled": "Disabled",
+                "enableButton": "Enable two-factor authentication",
+                "activation": {
+                    "description": "We sent a 6-digit code to your email address. Enter it below to finish enabling two-factor authentication.",
+                    "codeLabel": "Verification code",
+                    "confirmButton": "Confirm and enable",
+                    "cancelButton": "Cancel",
+                    "resendButton": "Resend code",
+                    "resendSent": "A new code has been sent.",
+                    "resendCooldown": "You can request a new code in {{seconds}}s"
+                },
+                "disable": {
+                    "button": "Disable two-factor authentication",
+                    "modalTitle": "Disable two-factor authentication?",
+                    "modalDescription": "Enter your current password to confirm.",
+                    "password": "Password",
+                    "cancel": "Cancel",
+                    "confirm": "Disable"
+                },
+                "trustedDevices": {
+                    "button": "Forget all trusted devices",
+                    "description": "Remove the trust granted to every remembered device, on this browser and others.",
+                    "listTitle": "Trusted devices",
+                    "empty": "No trusted devices yet.",
+                    "unknownDevice": "Unrecognised device",
+                    "currentDevice": "This device",
+                    "dates": "Added on {{added}} · expires on {{expires}}",
+                    "forgetOne": "Forget",
+                    "forgetOneLabel": "Forget device {{device}}"
+                },
+                "confirmationSentMessage": "A confirmation code has been sent to your email address.",
+                "enabledMessage": "Two-factor authentication is now enabled.",
+                "disabledMessage": "Two-factor authentication has been disabled.",
+                "trustedDevicesForgottenMessage": "All trusted devices have been forgotten.",
+                "trustedDeviceForgottenMessage": "The device has been forgotten."
             },
             "save": "Update",
             "passwordUpdated": "Your password has been updated."
@@ -785,6 +831,7 @@
             "memberSince": "Member since",
             "scenariosSaved": "Saved scenarios",
             "twoFactor": "Two-factor authentication",
+            "twoFactorEnabled": "enabled",
             "twoFactorDisabled": "disabled",
             "logout": "Log out",
             "dataNotice": "Finlr never stores banking data — only your simulation assumptions, for 24 months.",
