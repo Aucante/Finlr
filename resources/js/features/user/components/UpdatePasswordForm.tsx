@@ -270,10 +270,11 @@ export default function UpdatePasswordForm({ status }: UpdatePasswordFormProps) 
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex justify-center">
                         <Button
                             type="submit"
                             variant="brand"
+                            size="lg"
                             disabled={processing}
                         >
                             {t('settings.security.save')}

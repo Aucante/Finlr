@@ -69,8 +69,12 @@ export default function DeleteUserForm() {
                 </CardDescription>
             </CardHeader>
 
-            <CardContent className="py-6">
-                <Button variant="destructive" onClick={confirmUserDeletion}>
+            <CardContent className="flex justify-center py-6">
+                <Button
+                    variant="destructive"
+                    size="lg"
+                    onClick={confirmUserDeletion}
+                >
                     {t('settings.dangerZone.button')}
                 </Button>
 

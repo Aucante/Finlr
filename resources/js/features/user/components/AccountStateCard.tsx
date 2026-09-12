@@ -110,7 +110,7 @@ export default function AccountStateCard({
                     </div>
                 </dl>
 
-                <Button asChild variant="outline" className="w-1/4">
+                <Button asChild variant="outline" size="lg" className="self-center">
                     <Link href={route('logout')} method="post" as="button">
                         {t('settings.account.logout')}
                     </Link>

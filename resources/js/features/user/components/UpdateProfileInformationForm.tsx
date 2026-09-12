@@ -137,32 +137,35 @@ export default function UpdateProfileInformation({
                             </div>
                         ))}
 
-                    <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex flex-col items-center gap-2">
                         <Button
                             type="submit"
                             variant="brand"
+                            size="lg"
                             disabled={processing}
                         >
                             {t('settings.information.save')}
                         </Button>
 
-                        <span className="text-xs text-muted-foreground">
-                            {t('settings.information.lastUpdated', {
-                                date: formatDate(profileUpdatedAt, locale),
-                            })}
-                        </span>
+                        <div className="flex flex-wrap items-center justify-center gap-3">
+                            <span className="text-xs text-muted-foreground">
+                                {t('settings.information.lastUpdated', {
+                                    date: formatDate(profileUpdatedAt, locale),
+                                })}
+                            </span>
 
-                        <Transition
-                            show={recentlySuccessful}
-                            enter="transition ease-in-out"
-                            enterFrom="opacity-0"
-                            leave="transition ease-in-out"
-                            leaveTo="opacity-0"
-                        >
-                            <p className="text-sm text-muted-foreground">
-                                {t('settings.information.saved')}
-                            </p>
-                        </Transition>
+                            <Transition
+                                show={recentlySuccessful}
+                                enter="transition ease-in-out"
+                                enterFrom="opacity-0"
+                                leave="transition ease-in-out"
+                                leaveTo="opacity-0"
+                            >
+                                <p className="text-sm text-muted-foreground">
+                                    {t('settings.information.saved')}
+                                </p>
+                            </Transition>
+                        </div>
                     </div>
                 </form>
             </CardContent>
