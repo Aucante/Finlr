@@ -69,6 +69,9 @@ class SettingsTest extends TestCase
         $this->actingAs($user)->delete('/settings/two-factor/trusted-devices')
             ->assertRedirect(route('verification.notice'));
 
+        $this->actingAs($user)->delete('/settings/two-factor/trusted-devices/1')
+            ->assertRedirect(route('verification.notice'));
+
         $this->assertNull($user->fresh()->two_factor_enabled_at);
     }
 

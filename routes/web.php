@@ -4,6 +4,7 @@ use App\Modules\AnalogySimulator\Controllers\RunAnalogyComparisonController;
 use App\Modules\AnalogySimulator\Controllers\ShowAnalogySimulatorController;
 use App\Modules\Auth\Controllers\ConfirmTwoFactorActivationController;
 use App\Modules\Auth\Controllers\DisableTwoFactorController;
+use App\Modules\Auth\Controllers\ForgetTrustedDeviceController;
 use App\Modules\Auth\Controllers\ForgetTrustedDevicesController;
 use App\Modules\Auth\Controllers\RequestTwoFactorActivationController;
 use App\Modules\FireSimulator\Controllers\RunFireProjectionController;
@@ -46,6 +47,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::delete('/settings/two-factor/trusted-devices', ForgetTrustedDevicesController::class)
         ->name('two-factor.trusted-devices.forget');
+
+    Route::delete('/settings/two-factor/trusted-devices/{trustedDevice}', ForgetTrustedDeviceController::class)
+        ->whereNumber('trustedDevice')
+        ->name('two-factor.trusted-devices.forget-one');
 
     Route::get('/scenarios/{scenario}', ShowScenarioController::class)->name('scenarios.show');
     Route::patch('/scenarios/{scenario}', RenameScenarioController::class)->name('scenarios.rename');

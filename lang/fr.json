@@ -788,12 +788,20 @@
                 },
                 "trustedDevices": {
                     "button": "Oublier tous les appareils de confiance",
-                    "description": "Retire la confiance accordée à tous les appareils mémorisés, sur ce navigateur et les autres."
+                    "description": "Retire la confiance accordée à tous les appareils mémorisés, sur ce navigateur et les autres.",
+                    "listTitle": "Appareils de confiance",
+                    "empty": "Aucun appareil de confiance pour le moment.",
+                    "unknownDevice": "Appareil non reconnu",
+                    "currentDevice": "Cet appareil",
+                    "dates": "Ajouté le {{added}} · expire le {{expires}}",
+                    "forgetOne": "Oublier",
+                    "forgetOneLabel": "Oublier l'appareil {{device}}"
                 },
                 "confirmationSentMessage": "Un code de confirmation a été envoyé à votre adresse e-mail.",
                 "enabledMessage": "La double authentification est maintenant activée.",
                 "disabledMessage": "La double authentification a été désactivée.",
-                "trustedDevicesForgottenMessage": "Tous les appareils de confiance ont été oubliés."
+                "trustedDevicesForgottenMessage": "Tous les appareils de confiance ont été oubliés.",
+                "trustedDeviceForgottenMessage": "L'appareil a été oublié."
             },
             "save": "Mettre à jour",
             "passwordUpdated": "Votre mot de passe a été mis à jour."

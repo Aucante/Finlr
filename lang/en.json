@@ -788,12 +788,20 @@
                 },
                 "trustedDevices": {
                     "button": "Forget all trusted devices",
-                    "description": "Remove the trust granted to every remembered device, on this browser and others."
+                    "description": "Remove the trust granted to every remembered device, on this browser and others.",
+                    "listTitle": "Trusted devices",
+                    "empty": "No trusted devices yet.",
+                    "unknownDevice": "Unrecognised device",
+                    "currentDevice": "This device",
+                    "dates": "Added on {{added}} · expires on {{expires}}",
+                    "forgetOne": "Forget",
+                    "forgetOneLabel": "Forget device {{device}}"
                 },
                 "confirmationSentMessage": "A confirmation code has been sent to your email address.",
                 "enabledMessage": "Two-factor authentication is now enabled.",
                 "disabledMessage": "Two-factor authentication has been disabled.",
-                "trustedDevicesForgottenMessage": "All trusted devices have been forgotten."
+                "trustedDevicesForgottenMessage": "All trusted devices have been forgotten.",
+                "trustedDeviceForgottenMessage": "The device has been forgotten."
             },
             "save": "Update",
             "passwordUpdated": "Your password has been updated."

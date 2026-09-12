@@ -10,13 +10,16 @@ use Illuminate\Support\Str;
 
 class IssueTrustedDeviceCookieAction
 {
-    public function handle(User $user): void
+    public function __construct(private readonly DeriveTrustedDeviceLabelAction $deriveLabel) {}
+
+    public function handle(User $user, ?string $userAgent): void
     {
         $selector = Str::random(26);
         $validator = Str::random(40);
 
         TwoFactorTrustedDevice::query()->create([
             'user_id' => $user->id,
+            'label' => $this->deriveLabel->handle($userAgent),
             'selector' => $selector,
             'hashed_validator' => Hash::make($validator),
             'expires_at' => TwoFactorTrustedDevice::newExpiry(),

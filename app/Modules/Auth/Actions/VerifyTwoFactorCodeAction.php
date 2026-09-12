@@ -45,7 +45,7 @@ class VerifyTwoFactorCodeAction
         // challenge (CONCEPTION.md, section 3, point 2b) — no
         // trusted-device row is created for a 2FA that no longer exists.
         if ($request->boolean('remember_device') && $user->two_factor_enabled_at !== null) {
-            $this->issueTrustedDeviceCookie->handle($user);
+            $this->issueTrustedDeviceCookie->handle($user, $request->userAgent());
         }
 
         $request->session()->forget([

@@ -9,6 +9,7 @@ import SimulationPreferencesCard from '@/features/user/components/SimulationPref
 import TwoFactorForm from '@/features/user/components/TwoFactorForm';
 import UpdatePasswordForm from '@/features/user/components/UpdatePasswordForm';
 import UpdateProfileInformationForm from '@/features/user/components/UpdateProfileInformationForm';
+import type { TrustedDevice } from '@/features/user/types';
 import type { AuthenticatedPageProps } from '@/types';
 
 interface EditProps {
@@ -17,6 +18,7 @@ interface EditProps {
     memberSince: string;
     profileUpdatedAt: string;
     scenariosCount: number;
+    trustedDevices: TrustedDevice[];
 }
 
 export default function Edit({
@@ -25,6 +27,7 @@ export default function Edit({
     memberSince,
     profileUpdatedAt,
     scenariosCount,
+    trustedDevices,
 }: EditProps) {
     const { t } = useTranslation();
     const { auth } = usePage<AuthenticatedPageProps>().props;
@@ -99,6 +102,7 @@ export default function Edit({
                             <TwoFactorForm
                                 enabled={auth.user.two_factor_enabled}
                                 status={status}
+                                trustedDevices={trustedDevices}
                             />
 
                             <SimulationPreferencesCard />

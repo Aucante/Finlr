@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
-#[Fillable(['user_id', 'selector', 'hashed_validator', 'expires_at'])]
-#[Hidden(['hashed_validator'])]
+#[Fillable(['user_id', 'label', 'selector', 'hashed_validator', 'expires_at'])]
+#[Hidden(['selector', 'hashed_validator'])]
 class TwoFactorTrustedDevice extends Model
 {
     public const TRUST_DAYS = 30;

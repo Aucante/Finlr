@@ -10,14 +10,21 @@ import {
 import ForgetTrustedDevicesButton from '@/features/user/components/ForgetTrustedDevicesButton';
 import TwoFactorActivationForm from '@/features/user/components/TwoFactorActivationForm';
 import TwoFactorDisableDialog from '@/features/user/components/TwoFactorDisableDialog';
+import TrustedDevicesList from '@/features/user/components/TrustedDevicesList';
+import type { TrustedDevice } from '@/features/user/types';
 import { cn } from '@/lib/utils';
 
 interface TwoFactorFormProps {
     enabled: boolean;
     status?: string | null;
+    trustedDevices: TrustedDevice[];
 }
 
-export default function TwoFactorForm({ enabled, status }: TwoFactorFormProps) {
+export default function TwoFactorForm({
+    enabled,
+    status,
+    trustedDevices,
+}: TwoFactorFormProps) {
     const { t } = useTranslation();
 
     return (
@@ -80,6 +87,13 @@ export default function TwoFactorForm({ enabled, status }: TwoFactorFormProps) {
                         )}
                     </div>
                 )}
+                {status === 'two-factor-trusted-device-forgotten' && (
+                    <div className="w-full rounded-lg border border-brand/30 bg-brand/5 px-4 py-3 text-center text-sm font-medium text-brand">
+                        {t(
+                            'settings.security.twoFactor.trustedDeviceForgottenMessage',
+                        )}
+                    </div>
+                )}
 
                 {enabled ? (
                     <div className="flex flex-col gap-3 rounded-lg border border-dashed border-border p-4">
@@ -92,6 +106,7 @@ export default function TwoFactorForm({ enabled, status }: TwoFactorFormProps) {
                                 'settings.security.twoFactor.trustedDevices.description',
                             )}
                         </p>
+                        <TrustedDevicesList devices={trustedDevices} />
                     </div>
                 ) : (
                     <TwoFactorActivationForm />

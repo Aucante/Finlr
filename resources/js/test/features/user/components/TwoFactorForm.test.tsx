@@ -19,7 +19,7 @@ describe('TwoFactorForm', () => {
     });
 
     it('shows the disabled status and an enable button when inactive', () => {
-        render(<TwoFactorForm enabled={false} status={null} />);
+        render(<TwoFactorForm enabled={false} status={null} trustedDevices={[]} />);
 
         expect(
             screen.getByText(
@@ -34,7 +34,7 @@ describe('TwoFactorForm', () => {
     });
 
     it('shows the enabled status, a disable button and a distinct forget-devices button when active', () => {
-        render(<TwoFactorForm enabled={true} status={null} />);
+        render(<TwoFactorForm enabled={true} status={null} trustedDevices={[]} />);
 
         expect(
             screen.getByText(
@@ -58,7 +58,7 @@ describe('TwoFactorForm', () => {
 
     it('reveals the confirmation code step when activation is requested, without switching the displayed status to enabled', async () => {
         const user = userEvent.setup();
-        render(<TwoFactorForm enabled={false} status={null} />);
+        render(<TwoFactorForm enabled={false} status={null} trustedDevices={[]} />);
 
         await user.click(
             screen.getByRole('button', {
@@ -83,7 +83,7 @@ describe('TwoFactorForm', () => {
 
     it('opens the disable confirmation modal requiring the current password', async () => {
         const user = userEvent.setup();
-        render(<TwoFactorForm enabled={true} status={null} />);
+        render(<TwoFactorForm enabled={true} status={null} trustedDevices={[]} />);
 
         await user.click(
             screen.getByRole('button', {

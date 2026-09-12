@@ -788,12 +788,20 @@
                 },
                 "trustedDevices": {
                     "button": "Dimentica tutti i dispositivi attendibili",
-                    "description": "Rimuove la fiducia accordata a tutti i dispositivi memorizzati, su questo browser e sugli altri."
+                    "description": "Rimuove la fiducia accordata a tutti i dispositivi memorizzati, su questo browser e sugli altri.",
+                    "listTitle": "Dispositivi attendibili",
+                    "empty": "Nessun dispositivo attendibile al momento.",
+                    "unknownDevice": "Dispositivo non riconosciuto",
+                    "currentDevice": "Questo dispositivo",
+                    "dates": "Aggiunto il {{added}} · scade il {{expires}}",
+                    "forgetOne": "Dimentica",
+                    "forgetOneLabel": "Dimentica il dispositivo {{device}}"
                 },
                 "confirmationSentMessage": "Un codice di conferma è stato inviato al tuo indirizzo e-mail.",
                 "enabledMessage": "L'autenticazione a due fattori è ora attiva.",
                 "disabledMessage": "L'autenticazione a due fattori è stata disattivata.",
-                "trustedDevicesForgottenMessage": "Tutti i dispositivi attendibili sono stati dimenticati."
+                "trustedDevicesForgottenMessage": "Tutti i dispositivi attendibili sono stati dimenticati.",
+                "trustedDeviceForgottenMessage": "Il dispositivo è stato dimenticato."
             },
             "save": "Aggiorna",
             "passwordUpdated": "La tua password è stata aggiornata."

@@ -22,6 +22,7 @@ const defaultProps = {
     memberSince: '2024-01-01T00:00:00.000Z',
     profileUpdatedAt: '2024-06-01T00:00:00.000Z',
     scenariosCount: 3,
+    trustedDevices: [],
 };
 
 describe('Settings Edit page', () => {
@@ -108,6 +109,43 @@ describe('Settings Edit page', () => {
 
         expect(
             screen.getByText(i18n.t('settings.account.twoFactorEnabled')),
+        ).toBeInTheDocument();
+    });
+
+    it('lists the trusted devices next to the forget-all button when two-factor is enabled', () => {
+        vi.spyOn(inertia, 'usePage').mockReturnValue({
+            url: '/settings',
+            props: {
+                auth: {
+                    user: { ...user, two_factor_enabled: true },
+                    plan: 'free',
+                    permissions: [],
+                },
+            },
+        } as unknown as ReturnType<typeof inertia.usePage>);
+
+        render(
+            <Edit
+                {...defaultProps}
+                trustedDevices={[
+                    {
+                        id: 7,
+                        label: 'Firefox · Linux',
+                        createdAt: '2026-09-01T10:00:00.000Z',
+                        expiresAt: '2026-10-01T10:00:00.000Z',
+                        isCurrent: true,
+                    },
+                ]}
+            />,
+        );
+
+        expect(screen.getByText('Firefox · Linux')).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: i18n.t(
+                    'settings.security.twoFactor.trustedDevices.button',
+                ),
+            }),
         ).toBeInTheDocument();
     });
 
