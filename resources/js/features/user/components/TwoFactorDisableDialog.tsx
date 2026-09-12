@@ -58,7 +58,8 @@ export default function TwoFactorDisableDialog() {
             <Button
                 type="button"
                 variant="destructive"
-                className="self-start border-destructive/30"
+                size="lg"
+                className="self-center border-destructive/30"
                 onClick={confirmDisable}
             >
                 {t('settings.security.twoFactor.disable.button')}

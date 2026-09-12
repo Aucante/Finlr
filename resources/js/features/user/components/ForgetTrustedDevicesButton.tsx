@@ -22,7 +22,7 @@ export default function ForgetTrustedDevicesButton() {
         <Button
             type="button"
             variant="link"
-            className="h-auto self-start p-0 text-base font-medium text-foreground no-underline hover:text-foreground hover:no-underline"
+            className="h-auto self-start p-0 text-base font-semibold text-foreground no-underline hover:text-foreground hover:no-underline"
             onClick={forget}
             disabled={processing}
         >

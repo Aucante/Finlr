@@ -56,7 +56,7 @@ function TrustedDeviceItem({ device, locale }: TrustedDeviceItemProps) {
             <div className="flex min-w-0 items-center gap-3">
                 <span
                     aria-hidden
-                    className="flex size-9 shrink-0 items-center justify-center rounded-md bg-brand/15 font-mono text-xs text-brand"
+                    className="flex size-9 shrink-0 items-center justify-center rounded-md bg-linear-to-b from-brand/80 to-brand font-mono text-xs text-brand-foreground"
                 >
                     {initials(label)}
                 </span>
